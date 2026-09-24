@@ -22,10 +22,16 @@ export const POST = handle(async (request) => {
     throw new HttpError(503, 'mail_unavailable', 'E-mail delivery is not set up yet. Please write to support@fixer-app.com.');
   }
 
+  const site = siteUrl(request);
   const purchase = await findFilmPurchaseByEmail(email, typed);
   if (purchase) {
     const token = createAccessToken({ email: purchase.email, sessionId: purchase.sessionId });
-    await sendAccessEmail(purchase.email, `${siteUrl(request)}/watch?t=${encodeURIComponent(token)}`);
+    try {
+      await sendAccessEmail(purchase.email, `${site}/watch?t=${encodeURIComponent(token)}`);
+    } catch (error) {
+      // Same answer as for non-buyers: an error here must not reveal who bought the film.
+      console.error('[restore] e-mail failed', error?.message || error);
+    }
   }
   return json(200, { ok: true, message: GENERIC });
 });

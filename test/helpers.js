@@ -27,6 +27,7 @@ export function setupEnv(extra = {}) {
     'FORMS_WEBHOOK_URL',
     'STRIPE_FILM_PRICE_ID',
     'SMTP_HOST',
+    'REVOKED_ACCESS',
   ]) {
     delete process.env[key];
   }
@@ -37,10 +38,15 @@ export function setupEnv(extra = {}) {
 // Minimal in-memory stand-in for the Stripe client.
 export function fakeStripe() {
   const sessions = new Map();
+  const disputeData = new Map();
+  const intentMetadata = new Map();
   const created = [];
   let counter = 0;
   const client = {
     sessions,
+    disputeData,
+    intentMetadata,
+    scanEnabled: true,
     created,
     addSession(session) {
       const full = {
@@ -82,11 +88,34 @@ export function fakeStripe() {
         },
         async list(params) {
           const email = params.customer_details?.email;
+          const intent = params.payment_intent;
+          if (email === undefined && intent === undefined && !client.scanEnabled) return { data: [], has_more: false };
           const data = [...sessions.values()].filter(
-            (s) => s.customer_details?.email === email && (!params.status || s.status === params.status),
+            (s) =>
+              (email === undefined || s.customer_details?.email === email) &&
+              (intent === undefined || s.payment_intent?.id === intent) &&
+              (!params.status || s.status === params.status),
           );
-          return { data: structuredClone(data) };
+          return { data: structuredClone(data), has_more: false };
         },
+      },
+    },
+    paymentIntents: {
+      async update(id, { metadata }) {
+        intentMetadata.set(id, { ...(intentMetadata.get(id) || {}), ...metadata });
+        return { id, metadata: intentMetadata.get(id) };
+      },
+      async search({ query }) {
+        const email = /metadata\['buyer_email'\]:'([^']*)'/.exec(query)?.[1];
+        const data = [...intentMetadata.entries()]
+          .filter(([, meta]) => meta.buyer_email === email)
+          .map(([id, metadata]) => ({ id, metadata, status: 'succeeded' }));
+        return { data, has_more: false };
+      },
+    },
+    disputes: {
+      async list({ charge }) {
+        return { data: structuredClone(disputeData.get(charge) || []), has_more: false };
       },
     },
     webhooks: new Stripe('sk_test_dummy').webhooks,

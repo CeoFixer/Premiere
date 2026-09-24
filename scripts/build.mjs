@@ -8,17 +8,22 @@
 //   SITE_URL          https://www.fixer-premiere.com (canonical links, sitemap)
 //   FILM_PRICE_CENTS  700 → "$7" shown on the pages (the server charges the same env)
 //   TRAILER_URL       mp4 or YouTube/Vimeo embed URL for the trailer
+//   SKIP_MEDIA=1      don't download images (tests)
 //   STRICT_MEDIA=1    fail the build if any image could not be downloaded
+//                     (on by default on Vercel/CI so production never ships broken images)
 
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { copyFile, cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { copyFile, cp, mkdir, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = join(ROOT, 'site');
-const DIST = join(ROOT, 'dist');
+const FINAL = join(ROOT, 'dist');
+// Build into a temporary folder and swap it in at the end, so a running
+// server never sees a half-written dist/.
+const DIST = join(ROOT, '.dist-build');
 const CACHE = join(ROOT, '.cache', 'media');
 
 const SITE_URL = (process.env.SITE_URL || 'https://www.fixer-premiere.com').replace(/\/+$/, '');
@@ -81,6 +86,7 @@ async function download(url, timeoutMs = 60000) {
 }
 
 async function fetchMedia() {
+  if (process.env.SKIP_MEDIA === '1') return 0;
   const manifest = JSON.parse(await readFile(join(SITE, 'media.json'), 'utf8'));
   await mkdir(join(DIST, 'media'), { recursive: true });
   await mkdir(CACHE, { recursive: true });
@@ -123,7 +129,8 @@ async function fetchMedia() {
 
   if (missing.length) {
     console.warn(`\n[media] ${missing.length} image(s) could not be downloaded:\n  - ${missing.join('\n  - ')}`);
-    if (process.env.STRICT_MEDIA === '1') throw new Error('Missing media (STRICT_MEDIA=1)');
+    const strict = process.env.STRICT_MEDIA ? process.env.STRICT_MEDIA === '1' : Boolean(process.env.VERCEL || process.env.CI);
+    if (strict) throw new Error('Missing media — set STRICT_MEDIA=0 to build anyway, or put the files into site/media/');
   }
   return manifest.items.length - missing.length;
 }
@@ -214,6 +221,12 @@ async function build() {
   );
 
   const media = await fetchMedia();
+
+  const old = `${FINAL}.old`;
+  await rm(old, { recursive: true, force: true });
+  if (existsSync(FINAL)) await rename(FINAL, old);
+  await rename(DIST, FINAL);
+  await rm(old, { recursive: true, force: true });
   console.log(`Built ${pageFiles.length} pages, ${media} media files → dist/ (assets v${version})`);
 }
 

@@ -50,7 +50,9 @@ test/            тесты API (node --test)
 - токен доступа подписан HMAC-SHA256 — подделать или «перешить» на чужую покупку нельзя; фильм отдаётся по короткоживущей подписанной ссылке (6 часов), сам файл закрыт;
 - вебхук Stripe принимается только с верной подписью (`STRIPE_WEBHOOK_SECRET`);
 - POST-запросы с чужих сайтов отклоняются (проверка Origin), лимиты запросов на оплату/почту/формы, ловушка для ботов в формах;
-- «выслать ссылку» отвечает одинаково, есть покупка или нет, и пишет только на e-mail покупателя;
+- «выслать ссылку» отвечает одинаково, есть покупка или нет (даже если почта временно не работает), пишет только на e-mail покупателя и находит покупку без учёта регистра букв (после оплаты вебхук сохраняет e-mail в нижнем регистре в PaymentIntent);
+- без `SITE_URL` сервер не строит ссылки (кроме localhost) — подделанный заголовок Host не может увести ссылку покупателя на чужой домен;
+- утёкшую ссылку можно закрыть точечно: `REVOKED_ACCESS=cs_live_…` или e-mail; выигранный спор по оплате доступ не закрывает, проигранный — закрывает;
 - строгий Content-Security-Policy, HSTS, запрет встраивания сайта в чужие фреймы.
 
 ## Запуск локально
@@ -60,7 +62,7 @@ npm install
 cp .env.example .env      # заполнить (для пробы хватит тестового ключа Stripe sk_test_...)
 npm run build             # собирает dist/ и скачивает картинки
 npm start                 # http://localhost:3000
-npm test                  # тесты
+npm test                  # тесты (API + сервер)
 ```
 
 ## Переменные окружения
@@ -70,14 +72,14 @@ npm test                  # тесты
 | Переменная | Где взять |
 |---|---|
 | `SITE_URL` | `https://www.fixer-premiere.com` |
-| `STRIPE_SECRET_KEY` | Stripe → Developers → API keys (можно restricted key: Checkout Sessions — write, PaymentIntents и Charges — read) |
+| `STRIPE_SECRET_KEY` | Stripe → Developers → API keys (можно restricted key: Checkout Sessions и PaymentIntents — write, Charges и Disputes — read) |
 | `STRIPE_WEBHOOK_SECRET` | Stripe → Developers → Webhooks → endpoint `https://www.fixer-premiere.com/api/stripe-webhook`, события `checkout.session.completed`, `checkout.session.async_payment_succeeded` |
 | `ACCESS_TOKEN_SECRET` | случайная строка 32+ символа: `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` (не менять после запуска — старые ссылки перестанут работать) |
 | `FILM_S3_*` или `FILM_EMBED_URL` | где лежит сам фильм, см. ниже |
 | `SMTP_*` | почта для писем со ссылкой (Titan: `smtp.titan.email`, порт 465, ящик `app@fixer-app.com`) |
 | `LEGACY_BUYER_EMAILS` | e-mail покупателей со старого сайта через запятую |
 
-Цена: `FILM_PRICE_CENTS=700` ($7, как сейчас в Wix). Её же показывают страницы — после смены пересоберите сайт.
+Цена: `FILM_PRICE_CENTS=700` ($7, как сейчас в Wix). Её же показывают страницы — переменная нужна и при сборке, и при работе (на Vercel это одна и та же переменная; на VPS после смены пересоберите сайт). Если задан `STRIPE_FILM_PRICE_ID`, списывается цена этого Price — держите её равной `FILM_PRICE_CENTS`.
 
 ## Где хранить фильм
 
@@ -92,7 +94,8 @@ FILM_S3_SECRET_ACCESS_KEY=...
 ```
 
 Подходит и уже оплачиваемый AWS S3 (бакет `fixer-live`, тогда `FILM_S3_ENDPOINT` не нужен, `FILM_S3_REGION` — регион бакета), но там платный трафик.
-Файл — MP4 (H.264 + AAC, `faststart`), 1080p, ~2–4 ГБ. Либо закрытый плеер (Vimeo private link, Bunny Stream): `FILM_EMBED_URL=...`.
+Файл — MP4 (H.264 + AAC, `faststart`), 1080p, ~2–4 ГБ. Ссылка на файл живёт 6 часов и обновляется плеером сама, с того же места.
+Либо закрытый плеер (Vimeo private link, Bunny Stream): `FILM_EMBED_URL=...` — это слабее: адрес плеера одинаковый у всех покупателей, поэтому в настройках видеосервиса обязательно ограничьте встраивание своим доменом.
 
 Трейлер по умолчанию берётся с CDN Wix (работает, пока медиатека Wix существует — даже на бесплатном тарифе). Лучше загрузить его на YouTube или в тот же бакет и указать `TRAILER_URL`.
 
@@ -111,8 +114,10 @@ FILM_S3_SECRET_ACCESS_KEY=...
    }
    ```
 
-   Картинки скачиваются во время `npm run build` — серверу нужен доступ к `static.wixstatic.com` (или положите файлы в `site/media/`, они имеют приоритет).
-3. Render / Railway / Fly.io — как пункт 2 (start command `npm start`).
+   Картинки скачиваются во время `npm run build` — серверу нужен доступ к `static.wixstatic.com` (или положите файлы в `site/media/`, они имеют приоритет). На Vercel/CI сборка падает, если картинка не скачалась (чтобы не выкатить сайт без картинок); локально — только предупреждение (`STRICT_MEDIA=1/0` меняет это).
+   Сборка идёт во временную папку и подменяет `dist/` целиком — пересобирать можно на работающем сервере.
+   Ограничения частоты запросов хранятся в памяти процесса: на VPS это надёжно, на Vercel — «на каждый экземпляр функции», то есть мягче.
+3. Render / Railway / Fly.io — start command `npm start`, но **`HOST=0.0.0.0`** (их прокси подключается к приложению не через loopback). `TRUST_PROXY=1` ставьте, только если платформа сама перезаписывает `X-Forwarded-For` (Render, Fly — да).
 
 ## Перенос с Wix — чек-лист
 

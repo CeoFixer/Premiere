@@ -34,7 +34,7 @@
   --line-strong: rgba(255, 255, 255, 0.16);
   --text: #f4f4f5;
   --muted: #a1a1aa;
-  --faint: #71717a;
+  --faint: #8e8e98;
   --accent: #fffd01;
   --accent-soft: rgba(255, 253, 1, 0.12);
   --accent-ink: #0b0b0c;
@@ -133,6 +133,11 @@ select {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 6px;
+}
+
+/* Headings focused by script (status changes) are not interactive — no ring. */
+[tabindex='-1']:focus {
+  outline: none;
 }
 
 ::selection {
@@ -364,7 +369,8 @@ body.nav-open .site-header::before {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
-    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0.3s;
+    /* Hide only after the fade-out; become visible at once when opening so focus can move in. */
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0s linear 0.3s;
     overflow-y: auto;
   }
 
@@ -372,6 +378,7 @@ body.nav-open .site-header::before {
     opacity: 1;
     visibility: visible;
     transform: none;
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0s;
   }
 
   .main-nav a {

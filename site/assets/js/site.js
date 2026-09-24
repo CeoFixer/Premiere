@@ -3,6 +3,8 @@
   'use strict';
 
   const TOKEN_KEY = 'fp_access_token';
+  // Shape of a server-issued token (base64url payload + "." + base64url HMAC).
+  const TOKEN_RE = /^[A-Za-z0-9_-]{10,1000}\.[A-Za-z0-9_-]{20,100}$/;
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -11,12 +13,18 @@
   const store = {
     get() {
       try {
-        return localStorage.getItem(TOKEN_KEY) || '';
+        const token = localStorage.getItem(TOKEN_KEY) || '';
+        if (token && !TOKEN_RE.test(token)) {
+          localStorage.removeItem(TOKEN_KEY);
+          return '';
+        }
+        return token;
       } catch {
         return '';
       }
     },
     set(token) {
+      if (!TOKEN_RE.test(token || '')) return;
       try {
         localStorage.setItem(TOKEN_KEY, token);
       } catch {
@@ -89,10 +97,16 @@
     window.addEventListener('scroll', onScroll, { passive: true });
 
     if (!toggle || !nav) return;
+    const outside = $$('main, footer, .skip-link');
     const setOpen = (open) => {
       document.body.classList.toggle('nav-open', open);
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      // Keep keyboard and screen-reader focus inside the open menu.
+      outside.forEach((el) => {
+        el.inert = open;
+      });
+      if (open) $('a', nav)?.focus({ preventScroll: true });
     };
     toggle.addEventListener('click', () => setOpen(!document.body.classList.contains('nav-open')));
     nav.addEventListener('click', (event) => {
@@ -112,6 +126,8 @@
     const token = store.get();
     if (!token) return;
     $$('[data-watch-cta]').forEach((link) => {
+      link.dataset.defaultLabel ??= link.textContent;
+      link.dataset.defaultHref ??= link.getAttribute('href');
       link.href = '/watch';
       link.textContent = 'Watch now';
     });
@@ -119,7 +135,7 @@
       const link = document.createElement('a');
       link.className = button.className;
       link.href = '/watch';
-      link.innerHTML = button.dataset.ownedLabel || 'Continue watching';
+      link.textContent = button.dataset.ownedLabel || 'Continue watching';
       button.replaceWith(link);
     });
     $$('[data-owned-hide]').forEach((el) => {
@@ -127,6 +143,13 @@
     });
     $$('[data-owned-show]').forEach((el) => {
       el.hidden = false;
+    });
+  }
+
+  function resetWatchCta() {
+    $$('[data-watch-cta]').forEach((link) => {
+      if (link.dataset.defaultHref) link.href = link.dataset.defaultHref;
+      if (link.dataset.defaultLabel) link.textContent = link.dataset.defaultLabel;
     });
   }
 
@@ -298,13 +321,12 @@
         sources.forEach((src) => {
           const source = document.createElement('source');
           source.src = src;
-          source.type = 'video/mp4';
+          source.type = /\.webm(\?|$)/i.test(src) ? 'video/webm' : 'video/mp4';
           video.append(source);
         });
-        video.addEventListener(
-          'error',
-          () => toast('The trailer could not be loaded. Please try again later.', true),
-          true,
+        // The browser tries each <source> in turn; only the last one failing means no trailer.
+        video.lastElementChild?.addEventListener('error', () =>
+          toast('The trailer could not be loaded. Please try again later.', true),
         );
         frame.replaceChildren(video);
       }
@@ -362,7 +384,20 @@
 
   // ---------- thank-you page ----------
   function showState(root, name) {
-    $$('[data-state]', root).forEach((el) => el.classList.toggle('is-active', el.dataset.state === name));
+    const changed = root.dataset.currentState !== name;
+    root.dataset.currentState = name;
+    let active = null;
+    $$('[data-state]', root).forEach((el) => {
+      const on = el.dataset.state === name;
+      el.classList.toggle('is-active', on);
+      if (on) active = el;
+    });
+    // Move focus to the new heading so screen readers announce the change.
+    const heading = changed && active && $('h1, h2', active);
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
   }
 
   async function initThankYou() {
@@ -390,6 +425,8 @@
         store.set(data.token);
         initAccessAwareness();
         $('[data-watch-link]', root).value = data.watchUrl;
+        // Works even if this browser blocks storage.
+        $('[data-watch-now]', root).href = data.watchUrl;
         $('[data-buyer-email]', root).textContent = data.email || 'your e-mail';
         history.replaceState(null, '', '/thank-you');
         return showState(root, 'film');
@@ -424,63 +461,109 @@
   async function initWatch() {
     const root = $('[data-watch]');
     if (!root) return;
-    const params = new URLSearchParams(window.location.search);
-    let token = params.get('t');
-    if (token) {
-      store.set(token);
-      history.replaceState(null, '', '/watch');
-    } else {
-      token = store.get();
+    const fromLink = new URLSearchParams(window.location.search).get('t');
+    if (fromLink !== null) history.replaceState(null, '', '/watch');
+    // A link is only remembered once the server has confirmed it, so opening a
+    // bad link never wipes the access already saved on this device.
+    const saved = store.get();
+    let token = fromLink !== null ? fromLink : saved;
+
+    const deny = (message) => {
+      if (fromLink === null || fromLink === store.get()) {
+        store.clear();
+        resetWatchCta();
+      }
+      $('[data-denied-message]', root).textContent = message || 'This watch link is not valid.';
+      showState(root, 'denied');
+    };
+    $$('[data-forget]', root).forEach((button) =>
+      button.addEventListener('click', () => {
+        store.clear();
+        window.location.replace('/watch');
+      }),
+    );
+
+    if (fromLink !== null && !TOKEN_RE.test(fromLink)) {
+      if (!saved) return deny();
+      token = saved;
+      toast('That link was not valid — using the access saved on this device.');
     }
     if (!token) return showState(root, 'locked');
 
-    const load = async (retry) => {
-      showState(root, 'loading');
+    const fetchSource = async () => {
       const { ok, status, data } = await api('/api/film', { token });
-      if (!ok) {
-        if (status === 401 || status === 403) {
-          store.clear();
-          $('[data-denied-message]', root).textContent = data.message || 'This watch link is not valid.';
-          return showState(root, 'denied');
-        }
-        $('[data-watch-error]', root).textContent = data.message || 'The film could not be loaded.';
-        return showState(root, 'error');
+      if (ok) return data;
+      if (status === 401 || status === 403) deny(data.message);
+      else {
+        $('[data-watch-error]', root).textContent =
+          data.message || 'The film could not be loaded. Check your connection and try again.';
+        showState(root, 'error');
       }
-      $$('[data-viewer-email]', root).forEach((el) => (el.textContent = data.email || 'your purchase'));
-      const player = $('[data-player]', root);
-      if (data.source.kind === 'video') {
-        const video = document.createElement('video');
-        video.controls = true;
-        video.playsInline = true;
-        video.preload = 'metadata';
-        video.poster = '/media/still-01.jpg';
-        video.setAttribute('controlsList', 'nodownload');
-        video.addEventListener('contextmenu', (e) => e.preventDefault());
-        video.src = data.source.src;
-        video.addEventListener('error', () => {
-          // Signed links expire after a few hours — fetch a fresh one once.
-          if (!retry) load(true);
-        });
-        player.replaceChildren(video);
-      } else if (data.source.kind === 'embed') {
-        const iframe = document.createElement('iframe');
-        iframe.src = data.source.src;
-        iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
-        iframe.allowFullscreen = true;
-        iframe.title = data.title;
-        player.replaceChildren(iframe);
-      } else {
-        return showState(root, 'soon');
-      }
-      showState(root, 'ready');
+      return null;
     };
-    await load(false);
 
-    $('[data-forget]', root)?.addEventListener('click', () => {
-      store.clear();
-      toast('This device no longer has access. Use your e-mailed link to come back.');
-      showState(root, 'locked');
-    });
+    showState(root, 'loading');
+    let data = await fetchSource();
+    if (!data && token === fromLink && saved && saved !== fromLink && root.dataset.currentState === 'denied') {
+      // The link was rejected but this device already has access: use that.
+      token = saved;
+      toast('That link was not valid — using the access saved on this device.');
+      showState(root, 'loading');
+      data = await fetchSource();
+    }
+    if (!data) return;
+    if (fromLink !== null && token === fromLink) {
+      store.set(fromLink);
+      initAccessAwareness();
+    }
+    $$('[data-viewer-email]', root).forEach((el) => (el.textContent = data.email || 'your purchase'));
+    const player = $('[data-player]', root);
+
+    if (data.source.kind === 'video') {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.poster = '/media/still-01.jpg';
+      video.setAttribute('controlsList', 'nodownload');
+      video.addEventListener('contextmenu', (e) => e.preventDefault());
+      let failures = 0;
+      video.addEventListener('playing', () => {
+        failures = 0;
+      });
+      // Signed links expire after a few hours: get a fresh one and resume at the same spot.
+      video.addEventListener('error', async () => {
+        failures += 1;
+        if (failures > 3) {
+          $('[data-watch-error]', root).textContent = 'The film could not be played right now. Please try again later.';
+          return showState(root, 'error');
+        }
+        const resumeAt = video.currentTime || 0;
+        const fresh = await fetchSource();
+        if (!fresh || fresh.source.kind !== 'video') return;
+        video.addEventListener(
+          'loadedmetadata',
+          () => {
+            if (resumeAt) video.currentTime = resumeAt;
+            video.play().catch(() => {});
+          },
+          { once: true },
+        );
+        video.src = fresh.source.src;
+      });
+      video.src = data.source.src;
+      player.replaceChildren(video);
+    } else if (data.source.kind === 'embed') {
+      const iframe = document.createElement('iframe');
+      iframe.src = data.source.src;
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      iframe.allowFullscreen = true;
+      iframe.title = data.title;
+      player.replaceChildren(iframe);
+    } else {
+      return showState(root, 'soon');
+    }
+    showState(root, 'ready');
   }
 
   function initAccessPage() {

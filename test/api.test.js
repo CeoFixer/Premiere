@@ -327,3 +327,174 @@ describe('contact forms', () => {
     assert.equal(missing.status, 400);
   });
 });
+
+describe('fixes from the security review', () => {
+  let stripe;
+  let sent;
+  beforeEach(() => {
+    setupEnv();
+    stripe = fakeStripe();
+    sent = fakeMail();
+  });
+
+  const withToken = (token) => request('/api/film', { headers: { authorization: `Bearer ${token}` } });
+
+  it('refuses to build links from the Host header when SITE_URL is missing', async () => {
+    delete process.env.SITE_URL;
+    stripe.addSession({ id: PAID_ID });
+    const forged = new Request('https://attacker.example/api/restore', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: 'buyer@example.com' }),
+    });
+    const res = await call(restore, forged);
+    assert.equal(res.status, 503);
+    assert.equal(sent.length, 0);
+    const local = new Request('http://localhost:3000/api/checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ item: 'film' }),
+    });
+    assert.equal((await call(checkout, local)).status, 200);
+    assert.equal(stripe.created[0].success_url, 'http://localhost:3000/thank-you?session_id={CHECKOUT_SESSION_ID}');
+  });
+
+  it('keeps access when a dispute was won, ends it when lost', async () => {
+    stripe.addSession({
+      id: 'cs_test_disputewon0001',
+      payment_intent: { id: 'pi_5', latest_charge: { id: 'ch_won', refunded: false, disputed: true } },
+    });
+    stripe.addSession({
+      id: 'cs_test_disputelost001',
+      payment_intent: { id: 'pi_6', latest_charge: { id: 'ch_lost', refunded: false, disputed: true } },
+    });
+    stripe.disputeData.set('ch_won', [{ id: 'dp_1', status: 'won' }]);
+    stripe.disputeData.set('ch_lost', [{ id: 'dp_2', status: 'lost' }]);
+    const won = await call(film, withToken(createAccessToken({ email: 'a@example.com', sessionId: 'cs_test_disputewon0001' })));
+    const lost = await call(film, withToken(createAccessToken({ email: 'a@example.com', sessionId: 'cs_test_disputelost001' })));
+    assert.equal(won.status, 200);
+    assert.equal(lost.status, 403);
+  });
+
+  it('can revoke a single leaked link by session id or e-mail', async () => {
+    stripe.addSession({ id: PAID_ID });
+    const token = createAccessToken({ email: 'buyer@example.com', sessionId: PAID_ID });
+    process.env.REVOKED_ACCESS = PAID_ID;
+    assert.equal((await call(film, withToken(token))).status, 403);
+    process.env.REVOKED_ACCESS = 'BUYER@example.com';
+    const { setStripeClient } = await import('../lib/stripe.js');
+    setStripeClient(stripe); // clears the purchase cache
+    assert.equal((await call(film, withToken(token))).status, 403);
+  });
+
+  it('finds a buyer whose checkout e-mail had different letter case', async () => {
+    stripe.addSession({ id: PAID_ID, customer_details: { email: 'John.Doe@Example.com' } });
+    const res = await call(restore, request('/api/restore', { method: 'POST', body: { email: 'john.doe@example.com' } }));
+    assert.equal(res.status, 200);
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].to, 'John.Doe@Example.com');
+  });
+
+  it('answers the same when sending the e-mail fails', async () => {
+    stripe.addSession({ id: PAID_ID });
+    const { setMailTransport } = await import('../lib/mail.js');
+    setMailTransport({
+      async sendMail() {
+        throw new Error('SMTP down');
+      },
+    });
+    const buyer = await call(restore, request('/api/restore', { method: 'POST', body: { email: 'buyer@example.com' } }));
+    const stranger = await call(restore, request('/api/restore', { method: 'POST', body: { email: 'x@example.com' } }));
+    assert.equal(buyer.status, 200);
+    assert.deepEqual(buyer.data, stranger.data);
+  });
+
+  it('sends one e-mail when Stripe delivers the same event twice', async () => {
+    const session = stripe.addSession({ id: PAID_ID });
+    const payload = JSON.stringify({ id: 'evt_dup_1', type: 'checkout.session.completed', data: { object: session } });
+    const header = stripe.webhooks.generateTestHeaderString({ payload, secret: WEBHOOK_SECRET });
+    const make = () =>
+      request('/api/stripe-webhook', {
+        method: 'POST',
+        body: payload,
+        raw: true,
+        headers: { 'stripe-signature': header, 'content-type': 'application/json' },
+      });
+    assert.equal((await call(webhook, make())).status, 200);
+    assert.equal((await call(webhook, make())).status, 200);
+    assert.equal(sent.length, 1);
+  });
+});
+
+describe('second review round', () => {
+  let stripe;
+  let sent;
+  beforeEach(() => {
+    setupEnv();
+    stripe = fakeStripe();
+    sent = fakeMail();
+  });
+
+  const withToken = (token) => request('/api/film', { headers: { authorization: `Bearer ${token}` } });
+
+  it('tags the lower-cased buyer e-mail and finds old buyers through it', async () => {
+    const session = stripe.addSession({
+      id: PAID_ID,
+      customer_details: { email: 'Mary.Ann@Example.com' },
+      payment_intent: { id: 'pi_tag', latest_charge: { id: 'ch_tag', refunded: false, disputed: false } },
+    });
+    const payload = JSON.stringify({ id: 'evt_tag_1', type: 'checkout.session.completed', data: { object: session } });
+    const header = stripe.webhooks.generateTestHeaderString({ payload, secret: WEBHOOK_SECRET });
+    await call(
+      webhook,
+      request('/api/stripe-webhook', { method: 'POST', body: payload, raw: true, headers: { 'stripe-signature': header } }),
+    );
+    assert.equal(stripe.intentMetadata.get('pi_tag').buyer_email, 'mary.ann@example.com');
+    sent.length = 0;
+    stripe.scanEnabled = false; // prove the metadata search alone finds it
+    const res = await call(restore, request('/api/restore', { method: 'POST', body: { email: 'mary.ann@example.com' } }));
+    assert.equal(res.status, 200);
+    assert.equal(sent.length, 1);
+  });
+
+  it('keeps access when a dispute was prevented', async () => {
+    stripe.addSession({
+      id: 'cs_test_prevented00001',
+      payment_intent: { id: 'pi_p', latest_charge: { id: 'ch_p', refunded: false, disputed: true } },
+    });
+    stripe.disputeData.set('ch_p', [{ id: 'dp_p', status: 'prevented' }]);
+    const res = await call(film, withToken(createAccessToken({ email: 'a@example.com', sessionId: 'cs_test_prevented00001' })));
+    assert.equal(res.status, 200);
+  });
+
+  it('applies REVOKED_ACCESS even to a cached purchase', async () => {
+    stripe.addSession({ id: PAID_ID });
+    const token = createAccessToken({ email: 'buyer@example.com', sessionId: PAID_ID });
+    assert.equal((await call(film, withToken(token))).status, 200); // now cached
+    process.env.REVOKED_ACCESS = 'buyer@example.com';
+    assert.equal((await call(film, withToken(token))).status, 403);
+  });
+
+  it('limits IPv6 clients per /64 network', async () => {
+    const statuses = [];
+    for (let i = 1; i <= 6; i += 1) {
+      const res = await call(
+        restore,
+        request('/api/restore', {
+          method: 'POST',
+          body: { email: `v6-${i}@example.com` },
+          headers: { 'x-forwarded-for': `2001:db8:1:2::${i.toString(16)}` },
+        }),
+      );
+      statuses.push(res.status);
+    }
+    assert.equal(statuses.at(-1), 429);
+  });
+
+  it('flooding one limiter does not reset another', async () => {
+    const { rateLimit } = await import('../lib/http.js');
+    for (let i = 0; i < 3; i += 1) rateLimit('restore-email:victim@example.com', 3, 3600000);
+    for (let i = 0; i < 60000; i += 1) rateLimit(`film:10.${i >> 16}.${(i >> 8) & 255}.${i & 255}`, 60, 600000);
+    assert.throws(() => rateLimit('restore-email:victim@example.com', 3, 3600000), /Too many requests/);
+  });
+});

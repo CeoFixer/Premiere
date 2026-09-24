@@ -8,17 +8,22 @@
 import { createReadStream, existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, sep } from 'node:path';
+import { pipeline } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const DIST = join(ROOT, 'dist');
 const API_DIR = join(ROOT, 'api');
-const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || '0.0.0.0';
-const TRUST_PROXY = ['1', 'true', 'yes'].includes(String(process.env.TRUST_PROXY || '').toLowerCase());
-const MAX_BODY = 1024 * 1024;
 
+// .env must be loaded before any setting below is read.
 loadDotEnv(join(ROOT, '.env'));
+
+const PORT = Number(process.env.PORT || 3000);
+const TRUST_PROXY = ['1', 'true', 'yes'].includes(String(process.env.TRUST_PROXY || '').toLowerCase());
+// Behind a proxy, listen on loopback only so X-Forwarded-For can't be spoofed by
+// talking to the port directly.
+const HOST = process.env.HOST || (TRUST_PROXY ? '127.0.0.1' : '0.0.0.0');
+const MAX_BODY = 1024 * 1024;
 
 const config = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
 const redirects = new Map(config.redirects.map((r) => [r.source, r]));
@@ -63,6 +68,18 @@ function headersFor(pathname) {
 function send(res, status, headers, body) {
   res.writeHead(status, headers);
   res.end(body);
+}
+
+// Redirect targets built from the request path must stay on this site:
+// "//evil.com" or "/\\evil.com" would be read by browsers as another host.
+function localPath(path) {
+  return `/${String(path).replace(/^[/\\]+/, '')}`;
+}
+
+function stream(res, file, options) {
+  pipeline(createReadStream(file, options), res, (error) => {
+    if (error && error.code !== 'ERR_STREAM_PREMATURE_CLOSE') console.error('[server] stream', error.message);
+  });
 }
 
 async function handleApi(req, res, url) {
@@ -130,7 +147,12 @@ function resolveFile(pathname) {
 }
 
 function serveFile(req, res, file, status, pathname) {
-  const stat = statSync(file);
+  let stat;
+  try {
+    stat = statSync(file);
+  } catch {
+    return send(res, 404, { 'content-type': 'text/plain' }, 'Not found');
+  }
   const type = TYPES[extname(file).toLowerCase()] || 'application/octet-stream';
   const headers = {
     ...headersFor(pathname),
@@ -140,39 +162,57 @@ function serveFile(req, res, file, status, pathname) {
   };
   if (type.startsWith('text/html')) headers['cache-control'] = 'no-cache';
 
-  const range = req.headers.range && /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+  const range = parseRange(req.headers.range, stat.size);
   if (range && status === 200) {
-    const start = range[1] ? Number(range[1]) : Math.max(stat.size - Number(range[2] || 0), 0);
-    const end = range[1] && range[2] ? Math.min(Number(range[2]), stat.size - 1) : stat.size - 1;
-    if (start > end || start >= stat.size) {
-      return send(res, 416, { ...headers, 'content-range': `bytes */${stat.size}` });
-    }
+    if (range.unsatisfiable) return send(res, 416, { ...headers, 'content-range': `bytes */${stat.size}` });
+    const { start, end } = range;
     res.writeHead(206, { ...headers, 'content-range': `bytes ${start}-${end}/${stat.size}`, 'content-length': end - start + 1 });
     if (req.method === 'HEAD') return res.end();
-    return createReadStream(file, { start, end }).pipe(res);
+    return stream(res, file, { start, end });
   }
 
   res.writeHead(status, { ...headers, 'content-length': stat.size });
   if (req.method === 'HEAD') return res.end();
-  createReadStream(file).pipe(res);
+  stream(res, file);
+}
+
+// Single byte ranges only; malformed headers are ignored (full response), as RFC 9110 allows.
+function parseRange(header, size) {
+  const match = header && /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || (!match[1] && !match[2])) return null;
+  let start;
+  let end;
+  if (!match[1]) {
+    const suffix = Number(match[2]);
+    if (suffix === 0) return { unsatisfiable: true };
+    start = Math.max(size - suffix, 0);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    if (match[2] && Number(match[2]) < start) return null;
+    if (start >= size) return { unsatisfiable: true };
+    end = Math.min(match[2] ? Number(match[2]) : size - 1, size - 1);
+  }
+  return { start, end };
 }
 
 function handleStatic(req, res, url) {
   const { pathname } = url;
   if (!['GET', 'HEAD'].includes(req.method)) return send(res, 405, { allow: 'GET, HEAD' });
 
+  if (/^[/\\]{2}/.test(pathname)) return send(res, 308, { location: localPath(pathname) + url.search });
   const redirect = redirects.get(pathname);
   if (redirect) return send(res, redirect.permanent ? 308 : 307, { location: redirect.destination + url.search });
   if (pathname.length > 1 && pathname.endsWith('/')) {
-    return send(res, 308, { location: pathname.replace(/\/+$/, '') + url.search });
+    return send(res, 308, { location: localPath(pathname.replace(/\/+$/, '')) + url.search });
   }
   if (pathname.endsWith('.html')) {
     const clean = pathname === '/index.html' ? '/' : pathname.slice(0, -5);
-    return send(res, 308, { location: clean + url.search });
+    return send(res, 308, { location: localPath(clean) + url.search });
   }
 
   const file = resolveFile(pathname);
-  if (file) return serveFile(req, res, file, 200, pathname);
+  if (file) return serveFile(req, res, file, file.endsWith(`${sep}404.html`) ? 404 : 200, pathname);
   const notFound = join(DIST, '404.html');
   if (existsSync(notFound)) return serveFile(req, res, notFound, 404, pathname);
   send(res, 404, { 'content-type': 'text/plain' }, 'Not found');
@@ -193,11 +233,18 @@ export function createAppServer() {
     const host = req.headers.host || `localhost:${PORT}`;
     let url;
     try {
-      url = new URL(req.url, `${proto}://${host}`);
+      // Only origin-form request targets ("/path?query"), and a plain host[:port]:
+      // the client must not be able to steer the origin or the path via Host.
+      if (!req.url.startsWith('/') || !/^https?$/.test(proto)) throw new Error('bad target');
+      if (!/^(?:[a-z0-9.-]+|\[[0-9a-f:.]+\])(?::\d{1,5})?$/i.test(host)) throw new Error('bad host');
+      const target = new URL(req.url, 'http://placeholder');
+      url = new URL(`${target.pathname}${target.search}`, `${proto}://${host}`);
     } catch {
       return send(res, 400, { 'content-type': 'text/plain' }, 'Bad request');
     }
-    const work = url.pathname.startsWith('/api/') ? handleApi(req, res, url) : Promise.resolve(handleStatic(req, res, url));
+    const work = url.pathname.startsWith('/api/')
+      ? handleApi(req, res, url)
+      : Promise.resolve().then(() => handleStatic(req, res, url));
     work.catch((error) => {
       console.error('[server]', error);
       if (!res.headersSent) send(res, 500, { 'content-type': 'text/plain' }, 'Internal error');
