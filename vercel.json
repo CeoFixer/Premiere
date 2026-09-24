@@ -1,0 +1,46 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/laplage", "destination": "/la-plage", "permanent": true },
+    { "source": "/play", "destination": "/la-plage", "permanent": true },
+    { "source": "/donate-1", "destination": "/la-plage", "permanent": true },
+    { "source": "/lplg", "destination": "/watch", "permanent": true },
+    { "source": "/blank-1", "destination": "/watch", "permanent": true },
+    { "source": "/blank", "destination": "/access", "permanent": true },
+    { "source": "/blank-3", "destination": "/about", "permanent": true },
+    { "source": "/blank-2-1-1", "destination": "/cookies", "permanent": true },
+    { "source": "/thank-you-page", "destination": "/thank-you", "permanent": true },
+    { "source": "/plans-pricing", "destination": "/la-plage", "permanent": true },
+    { "source": "/pricing-plans/list", "destination": "/la-plage", "permanent": true },
+    { "source": "/account/my-subscriptions", "destination": "/access", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' https: blob:; font-src 'self'; connect-src 'self'; frame-src https:; form-action 'self' https://checkout.stripe.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+        },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/media/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
+    }
+  ]
+}

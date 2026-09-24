@@ -1,0 +1,33 @@
+---
+{
+  "title": "Donate | Fixer Premiere",
+  "description": "Support independent cinema. Your donation helps independent filmmakers bring their stories to the screen.",
+  "nav": "donate",
+  "priority": "0.6"
+}
+---
+<section class="page-hero">
+  <div class="container narrow">
+    <span class="eyebrow reveal">Donate</span>
+    <h1 class="h1 reveal" style="--delay:.06s">Support independent cinema</h1>
+    <p class="lead reveal" style="--delay:.12s">Independent films are made with passion and very small budgets. Your donation helps filmmakers finish their projects and bring new stories to Fixer Premiere.</p>
+
+    <form class="panel form reveal" style="--delay:.18s" data-donate-form novalidate>
+      <fieldset class="amounts">
+        <legend class="label" style="margin-bottom:12px">Choose an amount</legend>
+        <label class="amount"><input type="radio" name="amount" value="5"><span>$5</span></label>
+        <label class="amount"><input type="radio" name="amount" value="10" checked><span>$10</span></label>
+        <label class="amount"><input type="radio" name="amount" value="15"><span>$15</span></label>
+        <label class="amount"><input type="radio" name="amount" value="25"><span>$25</span></label>
+        <label class="amount"><input type="radio" name="amount" value="50"><span>$50</span></label>
+      </fieldset>
+      <div class="field">
+        <label for="custom-amount">Or enter your own amount (USD)</label>
+        <div class="money"><input class="input" id="custom-amount" name="custom" type="number" inputmode="decimal" min="1" max="1000" step="1" placeholder="20"></div>
+      </div>
+      <button class="btn btn-primary btn-lg" type="submit">Donate with Stripe</button>
+      <p class="form-status" role="status"></p>
+      <p class="small">You’ll be taken to Stripe’s secure checkout. We never see or store your card details.</p>
+    </form>
+  </div>
+</section>

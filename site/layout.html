@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta name="robots" content="{{robots}}">
+  <link rel="canonical" href="{{canonical}}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Fixer Premiere">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="{{canonical}}">
+  <meta property="og:image" content="{{ogImage}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{title}}">
+  <meta name="twitter:description" content="{{description}}">
+  <meta name="twitter:image" content="{{ogImage}}">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="color-scheme" content="dark">
+  <meta name="google-site-verification" content="W2Mh1GQd_aO7KrgmcJGw6MWea0nyrtlJmi84bMR_Fu8">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/site.css?v={{v}}">
+  <script src="/assets/js/site.js?v={{v}}" defer></script>
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/watch*"}},{"not":{"href_matches":"/thank-you*"}}]},"eagerness":"moderate"}]}
+  </script>
+  {{head}}
+</head>
+<body class="page-{{slug}}" data-page="{{slug}}">
+  <a class="skip-link" href="#main">Skip to content</a>
+  {{> header}}
+  <main id="main">
+{{content}}
+  </main>
+  {{> footer}}
+  {{> trailer}}
+  <div class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

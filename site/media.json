@@ -1,0 +1,31 @@
+{
+  "_comment": "Images copied from the Wix Media Manager of fixer-premiere.com. The build downloads each file once (resized by the Wix CDN) into dist/media/. After the move, replace 'src' with your own storage or drop the files into site/media/ — local files win.",
+  "items": [
+    { "file": "poster-main.jpg", "src": "https://static.wixstatic.com/media/0d0600_a132d8451c7d463aad52c2c71bed8bfe~mv2.jpg", "w": 900, "h": 1307 },
+    { "file": "poster-01.jpg", "src": "https://static.wixstatic.com/media/0d0600_5fa883d1729f4bd6b5f871fe947cf356~mv2.jpg", "w": 900, "h": 1307 },
+    { "file": "poster-02.jpg", "src": "https://static.wixstatic.com/media/0d0600_1bbc3c9a9b5844ca9493035ec9cef633~mv2.jpg", "w": 900, "h": 1307 },
+    { "file": "poster-03.jpg", "src": "https://static.wixstatic.com/media/0d0600_bc96f33a03e34b1dbb0a2a42f58429f9~mv2.jpg", "w": 900, "h": 1307 },
+    { "file": "poster-clean.jpg", "src": "https://static.wixstatic.com/media/0d0600_9de625cf7a1344018fb5eb18d578ba83~mv2.jpg", "w": 900, "h": 1307 },
+
+    { "file": "still-01.jpg", "src": "https://static.wixstatic.com/media/0d0600_7d3a318c95034e3890631d9bf54257b4~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-02.jpg", "src": "https://static.wixstatic.com/media/0d0600_b6824d6ea3b64273ad6c999e9eb71163~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-03.jpg", "src": "https://static.wixstatic.com/media/0d0600_d985501ed4a84a49a7c2e07123267c69~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-04.jpg", "src": "https://static.wixstatic.com/media/0d0600_6ac46ca8e090467d8bd0c0dcf3005a79~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-05.jpg", "src": "https://static.wixstatic.com/media/0d0600_193d504146494d8fa8fb366f6be9bf82~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-06.jpg", "src": "https://static.wixstatic.com/media/0d0600_c2034ea6eb3f47118ded3defd2fe0fd7~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-07.jpg", "src": "https://static.wixstatic.com/media/0d0600_33b2074c842b4d65aa590ba0e40593d3~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-08.jpg", "src": "https://static.wixstatic.com/media/0d0600_10a1858793944c50af7d002e14195564~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-09.jpg", "src": "https://static.wixstatic.com/media/0d0600_e367e785c37e45ccb394d102ef22a471~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-10.jpg", "src": "https://static.wixstatic.com/media/0d0600_809bcb6b99ba479abbaa3f2ab345f787~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-11.jpg", "src": "https://static.wixstatic.com/media/0d0600_a147e0a34fd84cd6a8319b4a8c97d760~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-12.jpg", "src": "https://static.wixstatic.com/media/0d0600_d6a7cb846b60404ca347ecc3dd0cd4eb~mv2.jpg", "w": 1920, "h": 804 },
+    { "file": "still-13.jpg", "src": "https://static.wixstatic.com/media/0d0600_3953a869a2a8459384d9e6d672ac0e82~mv2.jpg", "w": 1920, "h": 804 },
+
+    { "file": "og-image.jpg", "src": "https://static.wixstatic.com/media/0d0600_7d3a318c95034e3890631d9bf54257b4~mv2.jpg", "w": 1200, "h": 630 },
+
+    { "file": "fixer-icon.png", "src": "https://static.wixstatic.com/media/0d0600_579d735d11354e4c8e85cbb06c078c2c~mv2.png", "w": 256, "h": 256 },
+    { "file": "fixer-logo.png", "src": "https://static.wixstatic.com/media/0d0600_868f84e3e5764b5da3a60b4d5d2ee4db~mv2.png" },
+    { "file": "badge-app-store.png", "src": "https://static.wixstatic.com/media/0d0600_0fe4932506f640aa864e4329f91b71ee~mv2.png" },
+    { "file": "badge-google-play.png", "src": "https://static.wixstatic.com/media/0d0600_cbd529f0482c4b22a754de7a50129301~mv2.png" }
+  ]
+}

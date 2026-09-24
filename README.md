@@ -1,0 +1,126 @@
+# Fixer Premiere — fixer-premiere.com без Wix
+
+Сайт независимого кино **Fixer Premiere** (фильм «La Plage»), перенесённый с Wix в собственный код.
+Никаких ежемесячных платежей Wix: статические страницы + несколько серверных функций, оплата через ваш Stripe (аккаунт T21 Film Studio LLC).
+
+- Современный дизайн: тёмная «кино»-тема с фирменным жёлтым `#FFFD01`, шрифт Inter (встроен, без Google Fonts), плавные переходы между страницами (View Transitions), анимации при прокрутке, мобильное меню, галерея кадров с просмотром на весь экран, трейлер во всплывающем окне.
+- Оплата: Stripe Checkout (карта, Apple Pay / Google Pay — что включено в Stripe). Цену задаёт сервер, браузер выбрать цену не может.
+- Доступ к фильму: после оплаты — персональная ссылка (на странице «спасибо» и на e-mail). Каждый запуск фильма заново проверяется в Stripe: возврат денег или спор по оплате автоматически закрывает доступ.
+- Покупатели со старого Wix-сайта (204 оплаченных заказа «La Plage») сохраняют доступ — см. «Перенос с Wix».
+
+## Страницы
+
+| Адрес | Что это | Старый адрес на Wix (редирект 308) |
+|---|---|---|
+| `/` | Главная: фильм, трейлер, кадры, «как это работает», для кинематографистов, приложение FIXER, подписка | — |
+| `/la-plage` | Страница фильма: постер, цена, трейлер, кадры, постеры, вопросы | `/laplage`, `/play`, `/donate-1` (pre-order), `/plans-pricing` |
+| `/watch` | Просмотр (только по ссылке покупателя) | `/lplg`, `/blank-1` |
+| `/thank-you` | Подтверждение оплаты, персональная ссылка | `/thank-you-page` |
+| `/access` | «Мой доступ»: повторно выслать ссылку на e-mail | `/blank` (Registration), `/account/my-subscriptions` |
+| `/donate` | Пожертвование $5/$10/$15/$25/$50 или своя сумма | — |
+| `/about` | О проекте | `/blank-3` |
+| `/filmmakers` | Форма «предложить фильм» | — |
+| `/fixer-app` | Приложение FIXER (App Store, Google Play, веб) | — |
+| `/terms`, `/privacy`, `/cookies`, `/disclaimer` | Юридические страницы | `/blank-2-1-1` → `/cookies` |
+
+Тексты взяты с Wix-сайта (SEO-описания, текст страницы благодарности, описание для кинематографистов), картинки — из медиатеки Wix (постеры, 13 кадров, логотипы, значки магазинов).
+Метатег Google Search Console перенесён, поэтому подтверждение владения сайтом сохранится.
+
+## Как устроено
+
+```
+site/            исходники страниц: layout.html, partials/, pages/*.html, assets/ (css, js, svg), media.json
+scripts/build.mjs  сборка в dist/: страницы + шрифты + картинки (скачиваются с CDN Wix по media.json, кэш .cache/)
+api/             серверные функции (формат Vercel, и их же обслуживает server.mjs)
+  checkout.js        POST — создать Stripe Checkout (фильм или донат)
+  access.js          GET  — после оплаты проверить сессию в Stripe и выдать персональный токен
+  film.js            GET  — по токену выдать ссылку на поток (подписанная ссылка S3/R2 или закрытый плеер)
+  restore.js         POST — выслать ссылку повторно на e-mail покупателя
+  stripe-webhook.js  POST — Stripe сообщает об оплате → письмо со ссылкой
+  contact.js         POST — подписка и заявки кинематографистов → на почту / вебхук
+  health.js          GET  — что настроено (без значений секретов)
+lib/             общая логика: Stripe, токены (HMAC), почта (SMTP), видео (S3/R2)
+server.mjs       сервер для любого хостинга (VPS и т.п.), редиректы и заголовки берёт из vercel.json
+vercel.json      редиректы со старых адресов Wix, заголовки безопасности (CSP, HSTS...), кэш
+test/            тесты API (node --test)
+```
+
+Безопасность:
+- секретные ключи только в переменных окружения сервера, в браузер и в git не попадают (`.env` в `.gitignore`);
+- токен доступа подписан HMAC-SHA256 — подделать или «перешить» на чужую покупку нельзя; фильм отдаётся по короткоживущей подписанной ссылке (6 часов), сам файл закрыт;
+- вебхук Stripe принимается только с верной подписью (`STRIPE_WEBHOOK_SECRET`);
+- POST-запросы с чужих сайтов отклоняются (проверка Origin), лимиты запросов на оплату/почту/формы, ловушка для ботов в формах;
+- «выслать ссылку» отвечает одинаково, есть покупка или нет, и пишет только на e-mail покупателя;
+- строгий Content-Security-Policy, HSTS, запрет встраивания сайта в чужие фреймы.
+
+## Запуск локально
+
+```bash
+npm install
+cp .env.example .env      # заполнить (для пробы хватит тестового ключа Stripe sk_test_...)
+npm run build             # собирает dist/ и скачивает картинки
+npm start                 # http://localhost:3000
+npm test                  # тесты
+```
+
+## Переменные окружения
+
+Полный список с пояснениями — в `.env.example`. Обязательные для продажи фильма:
+
+| Переменная | Где взять |
+|---|---|
+| `SITE_URL` | `https://www.fixer-premiere.com` |
+| `STRIPE_SECRET_KEY` | Stripe → Developers → API keys (можно restricted key: Checkout Sessions — write, PaymentIntents и Charges — read) |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Developers → Webhooks → endpoint `https://www.fixer-premiere.com/api/stripe-webhook`, события `checkout.session.completed`, `checkout.session.async_payment_succeeded` |
+| `ACCESS_TOKEN_SECRET` | случайная строка 32+ символа: `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` (не менять после запуска — старые ссылки перестанут работать) |
+| `FILM_S3_*` или `FILM_EMBED_URL` | где лежит сам фильм, см. ниже |
+| `SMTP_*` | почта для писем со ссылкой (Titan: `smtp.titan.email`, порт 465, ящик `app@fixer-app.com`) |
+| `LEGACY_BUYER_EMAILS` | e-mail покупателей со старого сайта через запятую |
+
+Цена: `FILM_PRICE_CENTS=700` ($7, как сейчас в Wix). Её же показывают страницы — после смены пересоберите сайт.
+
+## Где хранить фильм
+
+Самый дешёвый вариант — **Cloudflare R2**: 10 ГБ бесплатно и бесплатный исходящий трафик (фильм можно смотреть сколько угодно раз без оплаты трафика). Бакет закрытый, сайт выдаёт покупателю временную подписанную ссылку:
+
+```
+FILM_S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+FILM_S3_BUCKET=fixer-premiere
+FILM_S3_KEY=la-plage-1080p.mp4
+FILM_S3_ACCESS_KEY_ID=...        # R2 → Manage API tokens (Object Read only)
+FILM_S3_SECRET_ACCESS_KEY=...
+```
+
+Подходит и уже оплачиваемый AWS S3 (бакет `fixer-live`, тогда `FILM_S3_ENDPOINT` не нужен, `FILM_S3_REGION` — регион бакета), но там платный трафик.
+Файл — MP4 (H.264 + AAC, `faststart`), 1080p, ~2–4 ГБ. Либо закрытый плеер (Vimeo private link, Bunny Stream): `FILM_EMBED_URL=...`.
+
+Трейлер по умолчанию берётся с CDN Wix (работает, пока медиатека Wix существует — даже на бесплатном тарифе). Лучше загрузить его на YouTube или в тот же бакет и указать `TRAILER_URL`.
+
+## Хостинг (выбрать позже)
+
+Сайт работает в двух режимах — код тот же:
+
+1. **Vercel** — подключить репозиторий, Framework: Other; `vercel.json` уже настроен (build `npm run build`, output `dist`, функции из `api/`). Внимание: бесплатный тариф Hobby — только для некоммерческого использования; для продаж нужен Pro ($20/мес).
+2. **Любой Node-хостинг / ваш VPS Hostinger** (уже оплачен): Node 20+, `npm ci && npm run build && npm start` (или pm2/systemd), перед ним nginx с HTTPS и `TRUST_PROXY=1`:
+
+   ```nginx
+   server {
+     server_name www.fixer-premiere.com fixer-premiere.com;
+     location / { proxy_pass http://127.0.0.1:3000; proxy_set_header Host $host;
+                  proxy_set_header X-Forwarded-For $remote_addr; proxy_set_header X-Forwarded-Proto $scheme; }
+   }
+   ```
+
+   Картинки скачиваются во время `npm run build` — серверу нужен доступ к `static.wixstatic.com` (или положите файлы в `site/media/`, они имеют приоритет).
+3. Render / Railway / Fly.io — как пункт 2 (start command `npm start`).
+
+## Перенос с Wix — чек-лист
+
+1. Хостинг + переменные окружения; `GET /api/health` должен показать `stripe`, `webhook`, `accessTokens`, `mail`, `film` ≠ `none`.
+2. Проверить покупку в тестовом режиме Stripe (`sk_test_...`, карта `4242 4242 4242 4242`), потом поставить живые ключи.
+3. Загрузить фильм в R2/S3 (или прописать закрытый плеер).
+4. Выгрузить e-mail покупателей со старого сайта (Wix → Pricing Plans → Orders, план «La Plage», статус Active — 204 заказа) в `LEGACY_BUYER_EMAILS`. Они заходят через «Мой доступ» своим e-mail.
+5. Webhook Stripe на `/api/stripe-webhook`.
+6. DNS `fixer-premiere.com` / `www` → новый хостинг (если домен куплен в Wix — записи меняются в Wix → Domains, премиум-план сайта для этого не нужен; позже домен можно перенести к другому регистратору).
+7. Проверить старые ссылки (`/laplage`, `/lplg`, `/blank` …) — они перенаправляются на новые страницы.
+8. Только после этого отключить премиум-план Wix у сайта «Fixer Premiere_MAIN».

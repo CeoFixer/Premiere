@@ -1,0 +1,36 @@
+---
+{
+  "title": "My access | Fixer Premiere",
+  "description": "Get your personal watch link again — enter the e-mail you used at checkout.",
+  "nav": "access",
+  "priority": "0.4"
+}
+---
+<section class="page-hero">
+  <div class="container narrow" data-access-page>
+    <span class="eyebrow reveal">My access</span>
+    <h1 class="h1 reveal" style="--delay:.06s">Get your watch link</h1>
+    <p class="lead reveal" style="--delay:.12s">Enter the e-mail you used at checkout and we’ll send your personal link to watch La Plage. No password needed.</p>
+
+    <div class="panel reveal" style="--delay:.18s" data-has-access hidden>
+      <div class="btn-row" style="justify-content:space-between">
+        <p><strong>This device already has access.</strong> <span class="muted">Enjoy the film!</span></p>
+        <a class="btn btn-primary" href="/watch">Watch now</a>
+      </div>
+    </div>
+
+    <form class="panel form reveal" style="--delay:.18s" data-form="restore" novalidate>
+      <div class="field">
+        <label for="restore-email">E-mail used at checkout</label>
+        <div class="inline-form" style="max-width:none">
+          <input class="input" id="restore-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <button class="btn btn-primary" type="submit">Send my link</button>
+        </div>
+      </div>
+      <p class="form-status" role="status"></p>
+      <p class="small">Bought the film on the old Fixer Premiere site? The same e-mail works here too. Still stuck? <a class="link" href="mailto:support@fixer-app.com">support@fixer-app.com</a></p>
+    </form>
+
+    <p class="muted reveal">Don’t have a ticket yet? <a class="link" href="/la-plage">Watch La Plage for {{price}}</a></p>
+  </div>
+</section>
