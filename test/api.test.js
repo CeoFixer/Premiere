@@ -6,6 +6,7 @@ import { POST as contact } from '../api/contact.js';
 import { GET as film } from '../api/film.js';
 import { POST as restore } from '../api/restore.js';
 import { POST as webhook } from '../api/stripe-webhook.js';
+import { embedUrl } from '../lib/film.js';
 import { createAccessToken, verifyAccessToken } from '../lib/token.js';
 import { SITE, WEBHOOK_SECRET, call, fakeMail, fakeStripe, noMail, request, setupEnv } from './helpers.js';
 
@@ -136,6 +137,13 @@ describe('film stream', () => {
   });
 
   const withToken = (token) => request('/api/film', { headers: { authorization: `Bearer ${token}` } });
+
+  it('turns any Vimeo link into the player URL', () => {
+    assert.equal(embedUrl('https://vimeo.com/123456789'), 'https://player.vimeo.com/video/123456789');
+    assert.equal(embedUrl('https://vimeo.com/123456789/abcdef1234'), 'https://player.vimeo.com/video/123456789?h=abcdef1234');
+    assert.equal(embedUrl('https://player.vimeo.com/video/1?h=2'), 'https://player.vimeo.com/video/1?h=2');
+    assert.equal(embedUrl('https://iframe.mediadelivery.net/embed/1/2'), 'https://iframe.mediadelivery.net/embed/1/2');
+  });
 
   it('requires a valid signed token', async () => {
     stripe.addSession({ id: PAID_ID });
