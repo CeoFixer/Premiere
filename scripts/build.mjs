@@ -143,6 +143,10 @@ async function build() {
   const fontSource = join(ROOT, 'node_modules', '@fontsource-variable', 'inter', 'files');
   await mkdir(join(DIST, 'assets', 'fonts'), { recursive: true });
   for (const font of FONT_FILES) await copyFile(join(fontSource, font), join(DIST, 'assets', 'fonts', font));
+  const cinzel = join(ROOT, 'node_modules', '@fontsource', 'cinzel', 'files');
+  for (const font of ['cinzel-latin-400-normal.woff2', 'cinzel-latin-ext-400-normal.woff2']) {
+    await copyFile(join(cinzel, font), join(DIST, 'assets', 'fonts', font));
+  }
 
   const version = await hashFiles([join(SITE, 'assets', 'css', 'site.css'), join(SITE, 'assets', 'js', 'site.js')]);
   const layout = await readFile(join(SITE, 'layout.html'), 'utf8');

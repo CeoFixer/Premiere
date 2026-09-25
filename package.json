@@ -2,7 +2,7 @@
   "name": "fixer-premiere",
   "version": "1.0.0",
   "private": true,
-  "description": "fixer-premiere.com \u2014 indie film streaming site (La Plage) with Stripe checkout and paid access",
+  "description": "fixer-premiere.com — indie film streaming site (La Plage) with Stripe checkout and paid access",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -17,6 +17,7 @@
     "@aws-sdk/client-s3": "^3.1139.0",
     "@aws-sdk/s3-request-presigner": "^3.1139.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/cinzel": "^5.3.0",
     "nodemailer": "^10.0.10",
     "stripe": "^22.6.2"
   }

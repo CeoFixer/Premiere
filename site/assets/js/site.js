@@ -373,6 +373,17 @@
     );
   }
 
+  function initShowAll() {
+    $$('[data-show-all]').forEach((button) =>
+      button.addEventListener('click', () => {
+        $$(`[data-lightbox="${button.dataset.showAll}"][hidden]`).forEach((el) => {
+          el.hidden = false;
+        });
+        button.closest('.fp-center')?.remove();
+      }),
+    );
+  }
+
   function initRails() {
     $$('[data-rail]').forEach((rail) => {
       const id = rail.dataset.rail;
@@ -582,6 +593,7 @@
     initTrailer();
     initLightbox();
     initRails();
+    initShowAll();
     initCopy();
     initThankYou();
     initWatch();

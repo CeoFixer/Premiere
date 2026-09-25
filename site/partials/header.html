@@ -1,18 +1,21 @@
 <header class="site-header" data-header>
     <div class="container header-inner">
       <a class="brand" href="/" aria-label="Fixer Premiere — home">
-        <img src="/assets/img/premiere-logo.svg" alt="Fixer Premiere" width="146" height="30">
+        <img src="/assets/img/premiere-logo.svg" alt="Fixer Premiere" width="194" height="40">
       </a>
       <nav class="main-nav" id="main-nav" aria-label="Main" data-nav>
         <a href="/la-plage"{{nav:la-plage}}>La Plage</a>
-        <a href="/about"{{nav:about}}>About</a>
-        <a href="/filmmakers"{{nav:filmmakers}}>For filmmakers</a>
-        <a href="/fixer-app"{{nav:fixer-app}}>FIXER app</a>
-        <a href="/donate"{{nav:donate}}>Donate</a>
+        <a href="/terms"{{nav:terms}}>Terms</a>
+        <a href="/privacy"{{nav:privacy}}>Privacy</a>
+        <a href="/cookies"{{nav:cookies}}>Cookies</a>
+        <a class="nav-only-mobile" href="/about"{{nav:about}}>About</a>
+        <a class="nav-only-mobile" href="/filmmakers"{{nav:filmmakers}}>For filmmakers</a>
+        <a class="nav-only-mobile" href="/donate"{{nav:donate}}>Donate</a>
+        <a class="nav-only-mobile" href="/fixer-app"{{nav:fixer-app}}>FIXER app</a>
         <a class="nav-only-mobile" href="/access"{{nav:access}}>My access</a>
       </nav>
       <div class="header-actions">
-        <a class="header-link" href="/access"{{nav:access}}>My access</a>
+        <a class="btn btn-ghost btn-sm" href="/access">My access</a>
         <a class="btn btn-primary btn-sm" href="/la-plage" data-watch-cta>Watch {{price}}</a>
         <button class="nav-toggle" type="button" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" data-nav-toggle>
           <span></span><span></span>
