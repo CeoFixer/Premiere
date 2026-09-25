@@ -1344,7 +1344,8 @@ body.nav-open .site-header::before {
   border-radius: var(--radius);
   overflow: hidden;
   background: #000;
-  aspect-ratio: 16 / 9;
+  /* La Plage is scope (2.39:1), same as its Vimeo player */
+  aspect-ratio: 1920 / 804;
   box-shadow: var(--shadow), 0 0 0 1px var(--line);
 }
 
