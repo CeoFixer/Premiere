@@ -1,33 +1,49 @@
 ---
 {
   "title": "Donate | Fixer Premiere",
-  "description": "Support independent cinema. Your donation helps independent filmmakers bring their stories to the screen.",
+  "description": "Support independent cinema. Every donation towards \"La Plage\" makes you an integral part of our team.",
   "nav": "donate",
   "priority": "0.6"
 }
 ---
-<section class="page-hero">
-  <div class="container narrow">
-    <span class="eyebrow reveal">Donate</span>
-    <h1 class="h1 reveal" style="--delay:.06s">Support independent cinema</h1>
-    <p class="lead reveal" style="--delay:.12s">Independent films are made with passion and very small budgets. Your donation helps filmmakers finish their projects and bring new stories to Fixer Premiere.</p>
-
-    <form class="panel form reveal" style="--delay:.18s" data-donate-form novalidate>
-      <fieldset class="amounts">
-        <legend class="label" style="margin-bottom:12px">Choose an amount</legend>
-        <label class="amount"><input type="radio" name="amount" value="5"><span>$5</span></label>
-        <label class="amount"><input type="radio" name="amount" value="10" checked><span>$10</span></label>
-        <label class="amount"><input type="radio" name="amount" value="15"><span>$15</span></label>
-        <label class="amount"><input type="radio" name="amount" value="25"><span>$25</span></label>
-        <label class="amount"><input type="radio" name="amount" value="50"><span>$50</span></label>
-      </fieldset>
+<section class="wrap lv-page lv-donate">
+  <div class="reveal">
+    <h1 class="visually-hidden">Donate</h1>
+    <p class="lv-donate-lead">When you donate to a filmmakers, you are not only supporting their art, but you are also helping to create new and innovative work that can entertain, educate, and inspire others.</p>
+    <form class="lv-form" data-donate-form novalidate>
       <div class="field">
-        <label for="custom-amount">Or enter your own amount (USD)</label>
-        <div class="money"><input class="input" id="custom-amount" name="custom" type="number" inputmode="decimal" min="1" max="1000" step="1" placeholder="20"></div>
+        <label for="donor-first">First name</label>
+        <input class="input" id="donor-first" name="first" type="text" autocomplete="given-name" maxlength="50" placeholder="First name">
       </div>
-      <button class="btn btn-primary btn-lg" type="submit">Donate with Stripe</button>
+      <div class="field">
+        <label for="donor-last">Last name</label>
+        <input class="input" id="donor-last" name="last" type="text" autocomplete="family-name" maxlength="50" placeholder="Last name">
+      </div>
+      <div class="field">
+        <label for="donor-email">Email *</label>
+        <input class="input" id="donor-email" name="email" type="email" autocomplete="email" placeholder="Email" required>
+      </div>
+      <div class="field">
+        <label class="lv-amount-label" for="custom-amount">Enter the amount you wish to pay: *</label>
+        <div class="lv-amount"><span aria-hidden="true">$</span><input id="custom-amount" name="custom" type="number" inputmode="decimal" min="1" max="1000" step="1" placeholder="Enter amount" required></div>
+      </div>
       <p class="form-status" role="status"></p>
+      <div class="lv-form-end">
+        <button class="btn btn-primary" type="submit">Go to Checkout</button>
+      </div>
       <p class="small">You’ll be taken to Stripe’s secure checkout. We never see or store your card details.</p>
     </form>
+  </div>
+  <div class="lv-donate-text reveal" style="--delay:.08s">
+    <p>In 2019, We Took a Bold Leap of Faith. Fueled by Passion and Self-Funded, We Began the Journey of Creating Our Independent Film "La Plage." This was our deliberate choice to be independent in every sense! Now, the choice is yours: Be a part of our groundbreaking team!</p>
+    <h2>Why It Matters?</h2>
+    <p>By backing us, you're not just funding a movie. You're endorsing a form of art that has the potential to inspire and captivate many. Be a part of something bigger than yourself.</p>
+    <h2>How Can You Join Us?</h2>
+    <p>Every contribution counts! Simply make a donation towards "La Plage," and you'll be an integral part of our team.</p>
+    <div class="lv-donate-posters">
+      <a href="/la-plage"><img src="/media/poster-clean.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></a>
+      <a href="/la-plage"><img src="/media/poster-04.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></a>
+      <a href="/la-plage"><img src="/media/poster-05.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></a>
+    </div>
   </div>
 </section>

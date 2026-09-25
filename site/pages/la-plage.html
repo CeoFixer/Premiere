@@ -9,33 +9,59 @@
   ]
 }
 ---
-<section class="fp-movie">
-  <div class="fp-movie-bg"><img src="/media/wide-2.png" alt="" width="1920" height="804"></div>
-  <div class="fp-movie-inner">
-    <div class="fp-poster reveal">
-      <img src="/media/poster-main.jpg" alt="La Plage — official poster" width="900" height="1307" fetchpriority="high">
+
+<section class="lv-movie">
+  <div class="lv-bg" aria-hidden="true"><img src="/media/still-01.jpg" alt="" width="1920" height="804" fetchpriority="high"></div>
+  <div class="lv-movie-inner">
+    <div class="lv-movie-poster reveal">
+      <img src="/media/poster-04.jpg" alt="La Plage — official poster" width="900" height="1307" fetchpriority="high">
     </div>
     <div class="reveal" style="--delay:.08s">
       <h1 class="fp-film-title">LA PLAGE</h1>
       <div class="fp-meta">
         <span class="fp-genre">LGBTQ+ Drama</span>
-        <span class="fp-details">2023 • 18+ • 1h 48 min • Ukraine</span>
+        <span class="fp-details">2023 • 18+ • 2h 01 min • Ukraine</span>
       </div>
       <p class="fp-synopsis">This film tells the story of two same-sex couples who meet by chance on a train heading to the north of France. Boys go to their parents for a coming-out, and girls, enveloped in the passion of fresh feelings, head for new adventures. However, their meeting on the train changes everything: first - plans, later - consciousness.</p>
-      <div class="fp-buttons">
-        <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Buy {{priceNumber}} USD</button>
+      <div class="lv-actions">
+        <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Buy now {{price}}</button>
         <a class="btn btn-primary" href="/donate">Support filmmakers</a>
-        <button class="btn btn-ghost" type="button" data-trailer-open>
-          Watch trailer
-          <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="8.33" fill="none" stroke="currentColor" stroke-width="1.67"/><path d="M8 7.2v5.6l4.6-2.8z" fill="currentColor"/></svg>
-        </button>
+        <button class="btn btn-ghost" type="button" data-trailer-open>Watch trailer</button>
       </div>
       <p class="small" data-owned-hide style="margin-top:16px">Already bought it? <a class="link" href="/access">Get your watch link</a></p>
     </div>
   </div>
 </section>
 
-<section class="wrap fp-section">
+<section class="wrap lv-section">
+  <h2 class="h-section reveal">Visual Media</h2>
+  <h3 class="lv-media-title reveal">Images</h3>
+  <div class="lv-grid reveal">
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/still-14.jpg" alt="Scene from La Plage" width="1600" height="900" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/still-02.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/still-13.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/scene-2022.png" alt="Scene from La Plage" width="900" height="390" loading="lazy"></button>
+  </div>
+  <h3 class="lv-media-title reveal">Episode</h3>
+  <div class="lv-grid reveal">
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/films-bg.jpg" alt="Scene from La Plage" width="1920" height="798" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/still-11.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+  </div>
+  <h3 class="lv-media-title reveal">Promo</h3>
+  <div class="lv-grid reveal">
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/home-hero.jpg" alt="Scene from La Plage" width="1500" height="1000" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/promo-2.jpg" alt="Scene from La Plage" width="1600" height="881" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/promo-3.jpg" alt="Scene from La Plage" width="1280" height="723" loading="lazy"></button>
+  </div>
+  <h3 class="lv-media-title reveal">Movie Posters</h3>
+  <div class="lv-grid lv-posters reveal">
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/poster-clean.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/poster-04.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></button>
+      <button class="shot" type="button" data-lightbox="film-media"><img src="/media/poster-05.jpg" alt="La Plage — poster" width="900" height="1307" loading="lazy"></button>
+  </div>
+</section>
+
+<section class="wrap lv-section">
   <h2 class="h-section reveal">Description</h2>
   <div class="fp-columns reveal">
     <div>
@@ -49,81 +75,56 @@
   </div>
 </section>
 
-<section class="wrap fp-section" style="padding-top:24px">
-  <h2 class="h-section reveal">Visual media</h2>
-  <div class="fp-media-row reveal">
-    <button class="shot" type="button" data-lightbox="film-stills"><img src="/media/still-09.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills"><img src="/media/still-10.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills"><img src="/media/still-11.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills"><img src="/media/still-12.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills" hidden><img src="/media/still-13.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills" hidden><img src="/media/still-01.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills" hidden><img src="/media/still-03.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-    <button class="shot" type="button" data-lightbox="film-stills" hidden><img src="/media/still-04.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-  </div>
-  <div class="fp-center">
-    <button class="btn btn-ghost" type="button" data-show-all="film-stills">Show all</button>
-  </div>
+<section class="wrap lv-section">
+  <h2 class="h-section lv-center reveal">Credits</h2>
+  <dl class="lv-credits reveal">
+    <div><dt>Starring</dt><dd>ANASTASIIA FETISOVA</dd><dd>RAPHAEL SAY</dd><dd>DENYS HRYSHCHUK</dd><dd>ANASTASIIA LIUNDRYNSKA</dd></div>
+    <div><dt>Authors Of The Screenplay</dt><dd>GOSHA BABANSKI</dd><dd>AMMUNA DABRA</dd></div>
+    <div><dt>Director Of Photography</dt><dd>SERHIY TRIFONOV</dd></div>
+    <div><dt>1AD</dt><dd>MAKSYM KULYNYCH</dd><dd>PAVLO KOHUT</dd></div>
+    <div><dt>Art Director</dt><dd>OLEXANDER ANTONENKO</dd></div>
+    <div><dt>Wardrobe Stylist</dt><dd>YEHOR TKACHENKO</dd><dd>VASYL BONDARENKO</dd></div>
+    <div><dt>Music Composer</dt><dd>VOLODYMYR MAZHORA</dd></div>
+    <div><dt>Musicians</dt><dd>YEVHEN PUGACHOV</dd><dd>MARIIA KLYMENKO</dd><dd>MYKOLA BABICH</dd><dd>MARI KORNET</dd></div>
+    <div><dt>Vocal</dt><dd>NAILE IBRAIMOVA</dd></div>
+    <div><dt>Sound Engineer</dt><dd>MYKOLA SHOSTOV</dd></div>
+    <div><dt>Sound Producer</dt><dd>VOLODYMYR TRETYAKOV</dd></div>
+    <div><dt>Sound Engineer</dt><dd>FARID MBADIN</dd><dd>YEVGENIY PRIKASHCHIKOV</dd><dd>ALYONA SMIKOVA</dd></div>
+    <div><dt>Sound Director</dt><dd>BOHDAN KLYMENKO</dd></div>
+    <div><dt>Cast</dt><dd>PATRICIA BARON-NAPP</dd><dd>FABRICE REBOIS</dd><dd>ANTONIO LANCIANO</dd><dd>VLADYSLAV VOYTUSHENKO</dd><dd>GOSHA BABANSKI</dd></div>
+    <div><dt>Dubbing Actors</dt><dd>OLGA GRISHKOVA</dd><dd>JIMMY VOHA-VOHA</dd><dd>DENYS LYUBIMOV</dd><dd>ANNA ABRAMYUK</dd><dd>ANASTASIYA POTOTSKA</dd><dd>GUILLAUME VERBECQ</dd><dd>ZAKHARIY ARTEMENYUK</dd><dd>DIEDONNE NGELEKA</dd></div>
+    <div><dt>Acting Coach</dt><dd>HANNA ABRAMUK</dd></div>
+    <div><dt>Dialogue Adapter</dt><dd>EVA MOROZOVA</dd><dd>DAGA DELMAEV</dd><dd>KSENIA VALUYSKA</dd><dd>HANNA KYRIENKO</dd></div>
+    <div><dt>1AC / Focus Puller</dt><dd>SERGII TOKAREV</dd></div>
+    <div><dt>2AC</dt><dd>DMYTRO MARTYNENKOV</dd></div>
+    <div><dt>Creative Team</dt><dd>AMMUNA DABRA</dd><dd>VALERIA RUDENKO</dd><dd>GOSHA BABANSKI</dd><dd>MAKSYM KULYNYCH</dd><dd>DMYTRO SUROV</dd></div>
+    <div><dt>VFX</dt><dd>DMITRO KRUPSKIY</dd><dd>YURII MUSIIENKO</dd></div>
+    <div><dt>Color Correction</dt><dd>MYKYTA KOPNIN</dd><dd>DMYTRO VASYLENKO</dd><dd>OLGA ISHCHUK</dd></div>
+    <div><dt>Editing</dt><dd>SERGII TKACHENKO</dd><dd>KATERYNA VANEEVA</dd><dd>ARTEM PYLYPCHUK</dd></div>
+    <div><dt>Special Thanks</dt><dd>MYKHAILO TKACHENKO</dd></div>
+    <div><dt>The Shooting Crew Expresses Gratitude</dt><dd>HANNA DEMCHUK</dd><dd>SERGEY KRAYNIY</dd><dd>NADIIA VELYCHENKO</dd><dd>IGOR RYZHKOV</dd><dd>SVITLANA RYMAKOVA</dd><dd>AND MANY OTHERS</dd></div>
+    <div><dt>Songs</dt><dd>MAZHORA</dd><dd>KAZKA</dd><dd>DANIEL SHAKE</dd><dd>LE</dd><dd>ILLIA OVCHARENKO</dd><dd>DANIEL MAMAKIN</dd><dd>PALINA</dd><dd>KOMITET AKA GOSHA BABANSKI</dd><dd>INDI-YA</dd><dd>MAX BARSKIH</dd></div>
+    <div><dt>Sound Design And Mixing</dt><dd>CINEMA SOUND UA</dd></div>
+    <div><dt>Rental House</dt><dd>PATRIOT RENTAL</dd></div>
+    <div><dt>Line Producer</dt><dd>DMYTRO SUROV</dd><dd>OLEKSIY YASAKOV</dd></div>
+    <div><dt>Film Curator</dt><dd>VALERIA RUDENKO</dd></div>
+    <div><dt>Executive Producer</dt><dd>SERGII TKACHENKO</dd><dd>IRYNA VELYCHENKO</dd></div>
+    <div><dt>Production</dt><dd>T21 FILM STUDIO</dd></div>
+  </dl>
 </section>
 
-<section class="wrap fp-section">
-  <div class="fp-credits reveal">
-    <p><span class="role">film by</span><span class="name">SERGII TKACHENKO</span></p>
-    <p><span class="role">STARRING</span><span class="name">ANASTASIA FETISOVA ANASTASIA LUNDRYNSKA DENYS HRYSHCHUK RAPHAEL SAY</span></p>
-    <p><span class="role">AUTHOR OF THE SCENARIO</span><span class="name">GEORGIY BABANSKY AMMUNA DABRA</span><span class="role">EXECUTIVE PRODUCER</span><span class="name">DMYTRO SUROV OLEKSIY YASAKOV</span></p>
-    <p><span class="role">DIRECTOR OF PHOTOGRAPHY</span><span class="name">SERHIY TRIFONOV</span><span class="role">ARTIST DIRECTOR</span><span class="name">OLEXANDER ANTONENKO</span></p>
-    <p><span class="role">STYLIST</span><span class="name">YEHOR TKACHENKO VASYL BONDARENKO</span><span class="role">COMPOSER</span><span class="name">VOLODYMYR MAZHORA</span></p>
-    <p><span class="role">DIRECTOR’S GROUP FIRST ASSISTANT DIRECTOR</span><span class="name">MAKSIM KULYNYCH PAVLO KOHUT</span></p>
-    <p><span class="role">CREATIVE GROUP</span><span class="name">AMMUNA DABRA VALERIA RUDENKO GEORGIY BABANSKI MAKSIM KULYNYCH DMYTRO SUROV</span></p>
-    <p><span class="role">PROJECT CURATOR</span><span class="name">VALERIA RUDENKO</span></p>
-  </div>
-  <div class="fp-social">
-    <a href="mailto:laplage.film@gmail.com" aria-label="E-mail the film team: laplage.film@gmail.com">
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M2 7l8.2 5.7c.7.5 1 .7 1.4.8.3.1.6.1.9 0 .4-.1.7-.3 1.4-.8L22 7M6.8 20h10.4c1.7 0 2.5 0 3.2-.3.6-.3 1-.8 1.3-1.3.3-.7.3-1.5.3-3.2V8.8c0-1.7 0-2.5-.3-3.2-.3-.6-.8-1-1.3-1.3C19.7 4 18.9 4 17.2 4H6.8c-1.7 0-2.5 0-3.2.3-.6.3-1 .8-1.3 1.3C2 6.3 2 7.1 2 8.8v6.4c0 1.7 0 2.5.3 3.2.3.6.8 1 1.3 1.3.7.3 1.5.3 3.2.3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </a>
-  </div>
+<section class="wrap lv-warning">
+  <p class="reveal">WARNING: THIS FILM CONTAINS STRONG LANGUAGE, SCENES OF DRUG AND CIGARETTE USE, VIOLENCE, AND SCENES OF A SEXUAL NATURE.</p>
 </section>
 
-<section class="wrap">
-  <div class="fp-campaign">
-    <div class="reveal">
-      <h2 class="h2">BECOME PART OF THE<br>"La Plage" CINEMA HISTORY!</h2>
-      <p class="kicker">A unique opportunity for all movie enthusiasts!</p>
-      <div class="copy">
-        <p>Do you want to be part of our movie "La Plage"? Every donation supports the independent team behind the film and helps bring new stories to the screen.</p>
-        <p><strong>Join us, become a part of the grand cinematic journey, and leave your mark in the world of cinema!</strong></p>
-      </div>
-      <a class="btn btn-primary" href="/donate">Join now</a>
+<section class="lv-outro">
+  <div class="lv-bg" aria-hidden="true"><img src="/media/still-05.jpg" alt="" width="1920" height="804" loading="lazy"></div>
+  <div class="lv-outro-inner reveal">
+    <h2 class="fp-film-title">LA PLAGE</h2>
+    <div class="lv-actions lv-actions-stack">
+      <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Buy now {{price}}</button>
+      <a class="btn btn-primary" href="/donate">Support filmmakers</a>
     </div>
-    <div class="fp-collage reveal" style="--delay:.08s">
-      <div class="col">
-        <button class="shot h130" type="button" data-lightbox="campaign"><img src="/media/still-06.jpg" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h220" type="button" data-lightbox="campaign"><img src="/media/portrait-1.jpg" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h154" type="button" data-lightbox="campaign"><img src="/media/still-07.jpg" alt="Scene from La Plage" loading="lazy"></button>
-      </div>
-      <div class="col">
-        <button class="shot h154" type="button" data-lightbox="campaign"><img src="/media/scene-2022.png" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h130" type="button" data-lightbox="campaign"><img src="/media/still-13.jpg" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h220" type="button" data-lightbox="campaign"><img src="/media/portrait-2.jpg" alt="Scene from La Plage" loading="lazy"></button>
-      </div>
-      <div class="col">
-        <button class="shot h220" type="button" data-lightbox="campaign"><img src="/media/portrait-3.jpg" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h130" type="button" data-lightbox="campaign"><img src="/media/scene-035.jpg" alt="Scene from La Plage" loading="lazy"></button>
-        <button class="shot h154" type="button" data-lightbox="campaign"><img src="/media/still-02.jpg" alt="Scene from La Plage" loading="lazy"></button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="wrap">
-  <div class="fp-box reveal">
-    <div>
-      <h2 class="h2">Discover the best independent movies on the web</h2>
-      <p class="sub">One ticket, lifetime access. Start watching today!</p>
-    </div>
-    <div class="fp-actions" style="justify-content:center">
-      <a class="btn btn-ghost" href="/access">My access</a>
-      <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Watch {{price}}</button>
-    </div>
+    <p class="lv-thanks">Thanks</p>
   </div>
 </section>

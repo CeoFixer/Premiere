@@ -4,103 +4,121 @@
   "description": "Fixer Premiere is your gateway to the world of independent cinema. Integrated within the FIXER app ecosystem, we unite indie directors and independent filmmakers in one space, offering niche movies available exclusively on our platform.",
   "priority": "1.0",
   "head": [
-    "<link rel=\"preload\" as=\"image\" href=\"/media/home-hero.jpg\" fetchpriority=\"high\">"
+    "<link rel=\"preload\" as=\"image\" href=\"/media/hero-poster.jpg\" fetchpriority=\"high\">"
   ]
 }
 ---
-<section class="fp-hero">
-  <div class="fp-hero-copy">
-    <div>
-      <h1 class="reveal">Join the new wave of indie cinema!</h1>
-      <p class="reveal" style="--delay:.08s">Discover fresh new talent from around the world and watch niche movies you won't find anywhere else.</p>
-    </div>
-    <div class="fp-actions reveal" style="--delay:.16s">
+<section class="lv-hero">
+  <div class="lv-hero-video">
+    <video autoplay muted loop playsinline preload="metadata" poster="/media/hero-poster.jpg" aria-hidden="true" data-bg-video>
+      <source src="/media/hero.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="lv-hero-panel">
+    <img src="/media/logo-pill.png" alt="" width="313" height="80">
+  </div>
+  <div class="lv-hero-copy">
+    <h1 class="reveal">Join the new wave of Indie Films</h1>
+    <p class="reveal" style="--delay:.08s">Discover fresh new talent from around the world and watch niche movies you won't find anywhere else.</p>
+    <div class="lv-actions reveal" style="--delay:.16s">
       <a class="btn btn-ghost" href="/access">My access</a>
       <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Watch {{price}}</button>
     </div>
   </div>
-  <div class="fp-hero-media reveal" style="--delay:.1s">
-    <img src="/media/home-hero.jpg" alt="Behind the scenes: cameraman on the set of La Plage" width="1500" height="1000" fetchpriority="high">
-    <img class="fp-pill" src="/media/logo-pill.png" alt="Fixer Premiere" width="313" height="80">
-  </div>
 </section>
 
-<section class="wrap">
-  <div class="fp-about">
+<section class="wrap lv-about">
+  <div class="lv-about-col">
     <div class="reveal">
       <span class="eyebrow">About us</span>
       <h2 class="h2">Introducing Fixer Premiere</h2>
-      <p class="supporting">Fixer Premiere is your gateway to the world of independent cinema. We're the new wave in indie cinema and we're just getting started.</p>
+      <p>Fixer Premiere is your gateway to the world of independent cinema. We're the new wave in indie cinema and we're just getting started.</p>
     </div>
-    <div class="fp-features">
-      <div class="fp-feature reveal" style="--delay:.06s">
-        <img src="/media/icon-globe.png" alt="" width="48" height="48">
-        <div>
-          <h3>Uniting Filmmakers from Around the Globe</h3>
-          <p>Integrated within the FIXER app ecosystem, we aim to unveil fresh talent from across the globe, uniting indie directors and filmmakers in one exclusive space.</p>
-        </div>
-      </div>
-      <div class="fp-feature reveal" style="--delay:.12s">
-        <img src="/media/icon-rocket.png" alt="" width="48" height="48">
-        <div>
-          <h3>Launchpad for Filmmakers</h3>
-          <p>We provide a launching pad for up-and-coming filmmakers with niche movies you won't find anywhere else. Join us on this exciting ride!</p>
-        </div>
-      </div>
+    <div class="reveal">
+      <h3>A Unique Ecosystem</h3>
+      <p>Integrated within the FIXER app ecosystem, we strive to showcase undiscovered talent from across the globe. By uniting indie directors and filmmakers in one exclusive platform, we're breaking down traditional barriers and offering a fresh perspective on the cinematic experience.</p>
+    </div>
+    <div class="reveal">
+      <h3>The Future of Indie Cinema</h3>
+      <p>We celebrate the diversity of storytelling. From LGBTQ+ films to narratives that tackle pressing issues, Fixer Premiere is a haven for filmmakers who push the boundaries. Here, your film’s genre or subject matter isn’t a limitation—it’s an asset.</p>
     </div>
   </div>
-  <div class="fp-wide-image reveal">
-    <img src="/media/wide-1.png" alt="On the set of La Plage" width="1920" height="804" loading="lazy">
+  <div class="lv-about-col lv-about-right">
+    <div class="reveal" style="--delay:.06s">
+      <h3>Uniting Filmmakers from Around the Globe</h3>
+      <p>Be a part of this exciting journey as we redefine the indie film landscape, one unique story at a time.</p>
+    </div>
+    <div class="reveal" style="--delay:.06s">
+      <h3>Launchpad for Filmmakers</h3>
+      <p>Our global reach allows us to bring together filmmakers from diverse backgrounds and cultures. Whether you're from a small town or a bustling city, Fixer Premiere offers an international platform where your voice can be heard, and your stories shared.</p>
+    </div>
+    <div class="reveal" style="--delay:.06s">
+      <h3>Be Seen, Make a Difference</h3>
+      <p>Now, every filmmaker has the right to be seen, irrespective of producers, distributors, or any other industry ties. Your vision matters, and we’re here to make sure it gets the spotlight it deserves.</p>
+    </div>
   </div>
 </section>
 
-<section class="wrap fp-films">
-  <div class="reveal">
-    <span class="eyebrow">Films</span>
-    <h2 class="h2">Discover Our First Film</h2>
-  </div>
-  <div class="fp-film-row">
+<section class="lv-films">
+  <div class="lv-bg" aria-hidden="true"><img src="/media/films-bg.jpg" alt="" width="1920" height="798" loading="lazy"></div>
+  <div class="wrap">
     <div class="reveal">
-      <h3 class="fp-film-title">LA PLAGE</h3>
-      <div class="fp-meta">
-        <span class="fp-genre">LGBTQ+ Drama</span>
-        <span class="fp-details">2023 • 18+ • 1h 48 min • Ukraine</span>
-      </div>
-      <p class="fp-synopsis">This film tells the story of two same-sex couples who meet by chance on a train heading to the north of France. Boys go to their parents for a coming-out, and girls, enveloped in the passion of fresh feelings, head for new adventures. However, their meeting on the train changes everything: first - plans, later - consciousness.</p>
-      <div class="fp-actions">
-        <a class="btn btn-primary" href="/la-plage" style="min-width:220px">
-          Go to film page
-          <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20"><path d="m7.5 15 5-5-5-5" fill="none" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
+      <span class="eyebrow">Films</span>
+      <h2 class="h2">Discover Our First Film</h2>
+    </div>
+    <div class="lv-film">
+      <a class="lv-film-poster reveal" href="/la-plage" aria-label="La Plage — film page">
+        <img src="/media/poster-01.jpg" alt="La Plage — official poster" width="900" height="1307" loading="lazy">
+      </a>
+      <div class="lv-film-info reveal" style="--delay:.08s">
+        <h3 class="fp-film-title">LA PLAGE</h3>
+        <div class="fp-meta">
+          <span class="fp-genre">LGBTQ+ Drama</span>
+          <span class="fp-details">2023 • 18+ • 2h 01 min • Ukraine</span>
+        </div>
+        <div class="lv-film-text">
+          <p>LA PLAGE - Ukrainian independent film, anthem of the new wave. Free relationships, non-traditional couples, parental care. Love and infatuation. Loyalty and betrayal.</p>
+          <p>It is about those who are not stuck in the world of rules and outdated traditions. Heroes break through to their truth through cinematography, music, drugs and sex. Age and gender are not important for them, their closeness is a bright emotional outburst against the background of Normand landscapes. They prove that love is beautiful in any form.</p>
+          <p>What destroys principles? What makes you look at relations between the sexes from a different angle? An instant feeling or a conscious passion? Parental upbringing or an instinctive impulse? We are witnessing the beginning of a protest that has become a personal revolution.</p>
+        </div>
+        <div class="lv-actions">
+          <button class="btn btn-primary" type="button" data-checkout="film" data-owned-label="Watch now">Buy now {{price}}</button>
+          <a class="btn btn-primary" href="/donate">Support filmmakers</a>
+          <button class="btn btn-ghost" type="button" data-trailer-open>Watch trailer</button>
+        </div>
       </div>
     </div>
-    <div class="fp-film-media reveal" style="--delay:.1s">
-      <a href="/la-plage" aria-label="La Plage — film page"><img src="/media/poster-main.jpg" alt="La Plage — official poster" width="900" height="1307" loading="lazy"></a>
-      <div class="stack">
-        <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-02.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-        <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-05.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-        <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-08.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
-      </div>
-    </div>
+  </div>
+</section>
+
+<section class="wrap lv-section">
+  <h2 class="h-section reveal">Visual Media</h2>
+  <div class="lv-strip reveal">
+    <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-05.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+    <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/scene-2022.png" alt="Scene from La Plage" width="900" height="390" loading="lazy"></button>
+    <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-10.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+    <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-11.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+    <button class="shot" type="button" data-lightbox="home-stills"><img src="/media/still-12.jpg" alt="Scene from La Plage" width="1920" height="804" loading="lazy"></button>
+  </div>
+  <div class="fp-center">
+    <a class="btn btn-ghost lv-wide-btn" href="/la-plage">Show more</a>
   </div>
 </section>
 
 <section class="wrap">
-  <div class="fp-box reveal" id="subscribe">
+  <div class="lv-newsletter reveal" id="subscribe">
     <div>
-      <h2 class="h2">Sign up for our newsletter</h2>
-      <p class="sub">Be the first to know about releases, industry news and insights.</p>
+      <h2 class="h2">Fixer Premiere | Indie Film Online</h2>
+      <p class="lv-newsletter-lead">Your gateway to the best indie films online.</p>
+      <p class="sub">Sign up for our updates and stay ahead with upcoming releases!</p>
     </div>
-    <form class="fp-subscribe" data-form="subscribe" novalidate>
-      <div class="field-col">
-        <label class="visually-hidden" for="subscribe-email">E-mail</label>
-        <input class="input" id="subscribe-email" name="email" type="email" autocomplete="email" placeholder="Enter your email" required>
-        <input type="hidden" name="consent" value="yes">
-        <p class="note">We care about your data in our <a href="/privacy">privacy policy</a>.</p>
-      </div>
-      <button class="btn btn-primary" type="submit">Subscribe</button>
+    <form class="lv-subscribe" data-form="subscribe" novalidate>
+      <label for="subscribe-email">Email *</label>
+      <input class="input" id="subscribe-email" name="email" type="email" autocomplete="email" required>
+      <label class="check"><input type="checkbox" name="consent" value="yes"> <span>Yes, subscribe me to your newsletter.</span></label>
+      <button class="btn btn-primary" type="submit">Submit</button>
       <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-      <p class="form-status" role="status" style="flex-basis:100%;text-align:center"></p>
+      <p class="form-status" role="status"></p>
     </form>
   </div>
 </section>

@@ -55,6 +55,20 @@ describe('checkout', () => {
     assert.equal(ok.status, 200);
     assert.equal(stripe.created[0].line_items[0].price_data.unit_amount, 1500);
     assert.equal(stripe.created[0].submit_type, 'donate');
+    assert.equal(stripe.created[0].customer_email, undefined);
+  });
+
+  it('passes the donor e-mail and name to Stripe', async () => {
+    const bad = await call(checkout, request('/api/checkout', { method: 'POST', body: { item: 'donation', amount: 1500, email: 'nope' } }));
+    assert.equal(bad.status, 400);
+    const ok = await call(
+      checkout,
+      request('/api/checkout', { method: 'POST', body: { item: 'donation', amount: 1500, email: ' Fan@Example.com ', name: 'Ann Lee' } }),
+    );
+    assert.equal(ok.status, 200);
+    const params = stripe.created.at(-1);
+    assert.equal(params.customer_email, 'fan@example.com');
+    assert.equal(params.metadata.donor_name, 'Ann Lee');
   });
 
   it('rejects unknown items and non-JSON bodies', async () => {

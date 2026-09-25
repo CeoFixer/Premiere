@@ -78,10 +78,10 @@ async function hashFiles(paths) {
 }
 
 async function download(url, timeoutMs = 60000) {
-  const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs), headers: { accept: 'image/*' } });
+  const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs), headers: { accept: 'image/*,video/mp4' } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const type = res.headers.get('content-type') || '';
-  if (!type.startsWith('image/')) throw new Error(`unexpected content-type ${type}`);
+  if (!/^(image\/|video\/mp4)/.test(type)) throw new Error(`unexpected content-type ${type}`);
   return Buffer.from(await res.arrayBuffer());
 }
 

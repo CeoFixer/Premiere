@@ -1,5 +1,5 @@
 {
-  "_comment": "Images copied from the Wix Media Manager of fixer-premiere.com. The build downloads each file once (resized by the Wix CDN) into dist/media/. After the move, replace 'src' with your own storage or drop the files into site/media/ \u2014 local files win.",
+  "_comment": "Images copied from the Wix Media Manager of fixer-premiere.com. The build downloads each file once (resized by the Wix CDN) into dist/media/. After the move, replace 'src' with your own storage or drop the files into site/media/ — local files win.",
   "items": [
     {
       "file": "poster-main.jpg",
@@ -10,18 +10,6 @@
     {
       "file": "poster-01.jpg",
       "src": "https://static.wixstatic.com/media/0d0600_5fa883d1729f4bd6b5f871fe947cf356~mv2.jpg",
-      "w": 900,
-      "h": 1307
-    },
-    {
-      "file": "poster-02.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_1bbc3c9a9b5844ca9493035ec9cef633~mv2.jpg",
-      "w": 900,
-      "h": 1307
-    },
-    {
-      "file": "poster-03.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_bc96f33a03e34b1dbb0a2a42f58429f9~mv2.jpg",
       "w": 900,
       "h": 1307
     },
@@ -44,44 +32,8 @@
       "h": 804
     },
     {
-      "file": "still-03.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_d985501ed4a84a49a7c2e07123267c69~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "still-04.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_6ac46ca8e090467d8bd0c0dcf3005a79~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
       "file": "still-05.jpg",
       "src": "https://static.wixstatic.com/media/0d0600_193d504146494d8fa8fb366f6be9bf82~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "still-06.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_c2034ea6eb3f47118ded3defd2fe0fd7~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "still-07.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_33b2074c842b4d65aa590ba0e40593d3~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "still-08.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_10a1858793944c50af7d002e14195564~mv2.jpg",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "still-09.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_e367e785c37e45ccb394d102ef22a471~mv2.jpg",
       "w": 1920,
       "h": 804
     },
@@ -116,12 +68,6 @@
       "h": 630
     },
     {
-      "file": "fixer-icon.png",
-      "src": "https://static.wixstatic.com/media/0d0600_579d735d11354e4c8e85cbb06c078c2c~mv2.png",
-      "w": 256,
-      "h": 256
-    },
-    {
       "file": "fixer-logo.png",
       "src": "https://static.wixstatic.com/media/0d0600_868f84e3e5764b5da3a60b4d5d2ee4db~mv2.png"
     },
@@ -144,54 +90,62 @@
       "src": "https://static.wixstatic.com/media/0d0600_33f4415040634cfbba450acd0ed935e1~mv2.png"
     },
     {
-      "file": "icon-globe.png",
-      "src": "https://static.wixstatic.com/media/0d0600_d6a13ce39a254dc99b77f239c4994fe0~mv2.png"
-    },
-    {
-      "file": "icon-rocket.png",
-      "src": "https://static.wixstatic.com/media/0d0600_7d2c20450f814ef089073100b8c7860c~mv2.png"
-    },
-    {
-      "file": "wide-1.png",
-      "src": "https://static.wixstatic.com/media/0d0600_676250202fda4032aaf782384f3a585f~mv2.png",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "wide-2.png",
-      "src": "https://static.wixstatic.com/media/0d0600_b21a2e4071c44b34a5ad58d5e356490f~mv2.png",
-      "w": 1920,
-      "h": 804
-    },
-    {
-      "file": "portrait-1.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_84709fdc80c14ef48c387c556441b82b~mv2.jpeg",
-      "w": 600,
-      "h": 900
-    },
-    {
-      "file": "portrait-2.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_e7a1e564e2614252a93bf9e83059234e~mv2.jpg",
-      "w": 600,
-      "h": 900
-    },
-    {
-      "file": "portrait-3.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_42d112f231f24a6c91e24f04a6686cf6~mv2.jpg",
-      "w": 600,
-      "h": 900
-    },
-    {
-      "file": "scene-035.jpg",
-      "src": "https://static.wixstatic.com/media/0d0600_6a52c3c584af4e92a4cdac26db740c46~mv2.jpg",
-      "w": 900,
-      "h": 507
-    },
-    {
       "file": "scene-2022.png",
       "src": "https://static.wixstatic.com/media/0d0600_af2ebc5c86da420f8672f0cf96472075~mv2.png",
       "w": 900,
       "h": 390
+    },
+    {
+      "file": "logo-header.png",
+      "src": "https://static.wixstatic.com/media/0d0600_55ba24a76ff541e3b0dcc7c5982ba0e3~mv2.png"
+    },
+    {
+      "file": "logo-small.png",
+      "src": "https://static.wixstatic.com/media/0d0600_c9f9da20aa43477196200e9424d118c6~mv2.png"
+    },
+    {
+      "file": "hero.mp4",
+      "src": "https://video.wixstatic.com/video/0d0600_4dc43abc09bc477ba18023814d36d88f/480p/mp4/file.mp4"
+    },
+    {
+      "file": "hero-poster.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_4dc43abc09bc477ba18023814d36d88ff000.jpg",
+      "w": 1920,
+      "h": 804
+    },
+    {
+      "file": "films-bg.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_6ccd95ec8c094144aa552cddcba2fdb9~mv2.jpg",
+      "w": 1920,
+      "h": 798
+    },
+    {
+      "file": "still-14.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_859df0f65d7248cda2c2f725e14faa71~mv2.jpg",
+      "w": 1600,
+      "h": 900
+    },
+    {
+      "file": "promo-2.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_60055a743a0d4f9ca5c8c6f680e7d35c~mv2.jpg",
+      "w": 1600,
+      "h": 881
+    },
+    {
+      "file": "promo-3.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_e98d1e0b53a14751af8945980abf9fbe~mv2.jpg"
+    },
+    {
+      "file": "poster-04.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_228660a205944787b37597bb4b5957d8~mv2.jpg",
+      "w": 900,
+      "h": 1307
+    },
+    {
+      "file": "poster-05.jpg",
+      "src": "https://static.wixstatic.com/media/0d0600_334317a457ab48d1a302437efb760f19~mv2.jpg",
+      "w": 900,
+      "h": 1307
     }
   ]
 }

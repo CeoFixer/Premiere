@@ -153,6 +153,15 @@
     });
   }
 
+  // Decorative background video: honour reduced motion.
+  function initBgVideo() {
+    $$('video[data-bg-video]').forEach((video) => {
+      if (!reducedMotion) return;
+      video.removeAttribute('autoplay');
+      video.pause();
+    });
+  }
+
   // ---------- reveal on scroll ----------
   function initReveal() {
     const items = $$('.reveal');
@@ -230,8 +239,23 @@
         status.className = 'form-status is-error';
         return;
       }
+      const emailInput = $('[name="email"]', form);
+      const email = emailInput ? emailInput.value.trim() : '';
+      if (emailInput && !emailInput.checkValidity()) {
+        status.textContent = 'Please enter a valid e-mail address.';
+        status.className = 'form-status is-error';
+        emailInput.focus();
+        return;
+      }
+      const name = ['first', 'last']
+        .map((field) => $(`[name="${field}"]`, form)?.value.trim() || '')
+        .filter(Boolean)
+        .join(' ');
       status.textContent = '';
-      startCheckout($('[type="submit"]', form), { item: 'donation', amount: cents });
+      const body = { item: 'donation', amount: cents };
+      if (email) body.email = email;
+      if (name) body.name = name;
+      startCheckout($('[type="submit"]', form), body);
     });
   }
 
@@ -587,6 +611,7 @@
     initHeader();
     initAccessAwareness();
     initReveal();
+    initBgVideo();
     initCheckout();
     initDonate();
     initForms();
