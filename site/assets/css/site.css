@@ -1889,7 +1889,9 @@ body.nav-open .site-header::before {
 .lv-hero-panel img {
   width: clamp(180px, 20vw, 280px);
   height: auto;
-  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.35));
+  /* the Wix file has white corners outside its rounded shape */
+  border-radius: 6.3% / 25%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .lv-hero-copy {
@@ -1932,7 +1934,7 @@ body.nav-open .site-header::before {
   }
 
   .lv-hero-video {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 5 / 6;
   }
 
   .lv-hero-video video {
@@ -1942,30 +1944,36 @@ body.nav-open .site-header::before {
   .lv-hero-panel {
     border-radius: 0;
     place-items: start center;
-    padding-top: 28px;
+    padding-top: 20px;
   }
 
   .lv-hero-panel img {
-    width: 170px;
+    width: 140px;
   }
 
   .lv-hero-copy {
     grid-area: panel;
     align-self: start;
     max-width: none;
-    padding: 110px var(--gutter) 40px;
+    padding: 78px var(--gutter) 28px;
     text-align: center;
   }
 
   .lv-hero-copy h1 {
     color: #141414;
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .lv-hero-copy p {
+    margin-top: 10px;
     margin-inline: auto;
     color: #141414;
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .lv-hero-copy .lv-actions {
+    margin-top: 18px;
   }
 
   .lv-hero-copy .lv-actions {
@@ -2036,15 +2044,25 @@ body.nav-open .site-header::before {
   }
 
   .lv-about-col {
-    gap: 36px;
+    gap: 28px;
   }
 
   .lv-about-right {
-    padding-top: 36px;
+    padding-top: 28px;
+  }
+
+  .lv-about .h2 {
+    font-size: 24px;
+  }
+
+  .lv-about h3 {
+    font-size: 18px;
   }
 
   .lv-about p {
-    font-size: 16px;
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.55;
   }
 }
 
@@ -2119,7 +2137,12 @@ body.nav-open .site-header::before {
   }
 
   .lv-film-text {
-    font-size: 16px;
+    margin-top: 24px;
+    font-size: 15px;
+  }
+
+  .lv-film-text p + p {
+    margin-top: 20px;
   }
 
   .lv-film-info .lv-actions {
@@ -2558,8 +2581,8 @@ body.nav-open .site-header::before {
     margin-top: 40px;
   }
 
-  .lv-form-end .btn {
-    width: 100%;
+  .lv-form-end {
+    justify-content: center;
   }
 }
 
@@ -2568,9 +2591,8 @@ body.nav-open .site-header::before {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 48px clamp(40px, 10vw, 140px);
-  padding: calc(var(--header-h) + 80px) 0 120px var(--gutter);
-  max-width: var(--container);
-  margin: 0 auto;
+  /* text lines up with the page container, the yellow panel runs to the right edge */
+  padding: calc(var(--header-h) + 80px) 0 120px max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
 }
 
 .lv-about-text {
@@ -2656,15 +2678,27 @@ body.nav-open .site-header::before {
     font-size: 17px;
   }
 
+  /* live site: the yellow panel opens the page on phones */
   .lv-submit {
+    order: -1;
     min-height: 0;
-    margin-left: var(--gutter);
-    padding-top: 80px;
-    border-radius: 40px 0 0 40px;
+    gap: 20px;
+    padding: 64px var(--gutter) 48px;
+    border-radius: 32px 0 0 32px;
   }
 
   .lv-submit-logo {
-    right: 24px;
+    display: none;
+  }
+
+  .lv-submit-title {
+    font-size: 30px;
+    line-height: 1.3;
+  }
+
+  .lv-submit-mail {
+    margin-top: 12px;
+    font-size: 17px;
   }
 }
 
@@ -2771,3 +2805,14 @@ body.nav-open .site-header::before {
     min-height: 96px;
   }
 }
+
+/* ---------- Wide screens: scale the 1440px layout up, like the Wix site does ---------- */
+@media (min-width: 1500px) { html { zoom: 1.04; } }
+@media (min-width: 1600px) { html { zoom: 1.11; } }
+@media (min-width: 1700px) { html { zoom: 1.18; } }
+@media (min-width: 1800px) { html { zoom: 1.25; } }
+@media (min-width: 1900px) { html { zoom: 1.32; } }
+@media (min-width: 2000px) { html { zoom: 1.39; } }
+@media (min-width: 2200px) { html { zoom: 1.53; } }
+@media (min-width: 2400px) { html { zoom: 1.67; } }
+@media (min-width: 2560px) { html { zoom: 1.78; } }
